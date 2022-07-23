@@ -28,7 +28,7 @@ app.config['SECRET_KEY'] = "keep it secret, keep it safe"
 
 # sqlite works for creating instance. It would be nice if I can do it later in mysql
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-    f'mysql:///{os.path.join(basedir, "data-dev.msql")}'
+    f'sqlite:///{os.path.join(basedir, "data-dev.sqlite")}'
 
 # supressing errors
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -39,6 +39,12 @@ db = SQLAlchemy(app)
 #it is initalized by passing in the flask_bootstrap instance
 #so here app is passed into the constructor
 bootstrap=Bootstrap(app)
+
+# don't have to manually import objects
+# now you add objects by passing a dictionary
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db, User=User. Role=Role)
 
 # setting up a model
 class Role(db.Model):
@@ -64,8 +70,19 @@ class User(db.Model):
 # "from app import db" imports the database instance
 # "db.create_all()" creates the tables
 # mysql -u root -p checks password of mysql
+# db.drop_all() - drops all tables
+# print(admin.role.id) checks the object
+# only when there is a commit where a row is added to a database
+
+# add an object - db.session.add(admin_role)
+# adding all object - add_all
+# db.session.commit()
 
 # adding methods that it accepts
+# to get data out, each model has a query object
+# Role.query.all()
+# User.query.filter_by(role=user_role).all()
+# str(query) you can see underlying SQL command
 @app.route('/', methods=['GET','POST'] )
 
 #handler
