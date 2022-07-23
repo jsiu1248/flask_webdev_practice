@@ -44,7 +44,7 @@ bootstrap=Bootstrap(app)
 # now you add objects by passing a dictionary
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, User=User. Role=Role)
+    return dict(db=db, User=User, Role=Role)
 
 # setting up a model
 class Role(db.Model):
@@ -52,7 +52,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64), unique = True)
     # linking the role model and the user model
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', backref='role', lazy = 'dynamic')
     # returning a string with the name
     def __repr__(self):
         return f"<Role {self.name}>"
@@ -83,6 +83,12 @@ class User(db.Model):
 # Role.query.all()
 # User.query.filter_by(role=user_role).all()
 # str(query) you can see underlying SQL command
+
+# backref - adds a back reference to the other model in the relationship
+# uselist - use a scalar instead of a list if false
+# paginate - returns a pagination object that contains a range of results
+# lazy loading allows for data only needed to be loaded
+
 @app.route('/', methods=['GET','POST'] )
 
 #handler
