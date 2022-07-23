@@ -97,15 +97,30 @@ def index():
     form = NameForm()
     if form.validate_on_submit():
         # name=None # we need a session variable now instead
-
-        session['name']= form.name.data
+        name_entered = form.name.data
+        # query checking if the name is in the database
+        user = User.query.filter_by(user_name = name_entered).first()
+        if user is None:
+            # setting username to data that has just been entered
+            user = User(username = name_entered)
+            db.session.add(user)
+            db.session.commit()
+            # indicating that a user is new
+            session['known'] = False
+        else:
+            # user does exist in the database?
+            session['known'] = True
+        session['name']= name_entered
 
         # name=form.name.data # we can clear the line because it already gets cleared
         form.name.data="" # what does this do?
+        name_entered = form.name.data
         #whenever a post function happens then you can go back to get function so it doesn't error
         flash('Please enjoy this place!')
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+    return render_template('index.html', form=form, name=session.get('name'), known = session.get('known', False))
+        # pass in known into the template
+
 
 
 @app.route('/zodiac', methods=["GET", "POST"])
