@@ -99,7 +99,7 @@ def index():
         # name=None # we need a session variable now instead
         name_entered = form.name.data
         # query checking if the name is in the database
-        user = User.query.filter_by(user_name = name_entered).first()
+        user = User.query.filter_by(username = name_entered).first()
         if user is None:
             # setting username to data that has just been entered
             user = User(username = name_entered)
