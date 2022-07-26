@@ -67,7 +67,7 @@ class User(db.Model):
         return f"<User {self.username}>"
 
 # "flask shell" creates an instance of a database
-# "from app import db" imports the database instance
+# "from app import db" imports the database instance # for now everytime have to call
 # "db.create_all()" creates the tables
 # mysql -u root -p checks password of mysql
 # db.drop_all() - drops all tables
@@ -127,20 +127,19 @@ def index():
 def zodiac():
     # creating form
     form = NameForm()
-    print(f'xx {form.validate_on_submit()}')
-    if form.validate_on_submit():
+    if form.validate_on_submit(): # check if it is post request + validate fields
         # a session object is a dictionary object
         # name is a session variable and setting it equal to the form's name's data.
-        session['name']= form.name.data
+        session['name']= form.name.data # within the wtf package
         # date is a session variable and setting it equal to the form's birthday data
         session['date']=form.birthday.data
         form_date=session['date']
         # new variable for storing animal name
         zodiac_animal = zodiac_year(form_date)
-        flash("Your zodiac sign is "+zodiac_animal)
+        flash("Your zodiac sign is " + zodiac_animal)
         return redirect(url_for('zodiac'))
     #
-    return render_template('zodiac.html', form=form, name=session.get('name'),
+    return render_template('zodiac.html', form = form, name = session.get('name'),
     date_year=session.get('date_year'))
 
 def zodiac_year(user_date):
