@@ -7,6 +7,7 @@ from wtforms import StringField, SubmitField, DateField
 from wtforms.validators import DataRequired
 import os
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 class NameForm(FlaskForm):
     # the validator is needed because a string is required
@@ -35,6 +36,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # initalize the extension
 db = SQLAlchemy(app)
+
+# render_as_batch is needed when using SQLite
+migrate = Migrate(app, db, render_as_batch=True)
+
+# make sure export FLASK_APP=app.py
+# flask db init
+# then migration folder will appear
+# delete the database file
+# flask db migrate -m "initial migration"
+# alembic detects changes
+# spits out a file that sees what is commited and upgrades and downgrades
+# add file to show migration and add good commit message
 
 #it is initalized by passing in the flask_bootstrap instance
 #so here app is passed into the constructor
