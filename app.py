@@ -1,3 +1,5 @@
+# commenting this out so that __init__.py can run 
+"""
 from datetime import date
 from wsgiref.validate import validator
 from flask import Flask, render_template, abort, url_for, redirect, session, flash
@@ -245,3 +247,5 @@ def internal_server_error(e):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5001)
+
+"""
