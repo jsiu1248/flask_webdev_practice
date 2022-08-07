@@ -24,3 +24,5 @@ def create_app(config_name='default'):
         Your other routes and error handlers here...
         """
     return app
+
+new_app = create_app()
