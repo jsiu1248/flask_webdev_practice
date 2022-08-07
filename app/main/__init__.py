@@ -12,15 +12,14 @@ LoginManager User Loader...
 """
 def create_app(config_name='default'):
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = "keep it secret, keep it safe"
-    app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    bootstrap.init_app(app) # extension initialization
-    db.init_app(app) # another extension initialization
-
+    # old way: app.config.from_pyfile('config.py')
     config_class = configs[config_name]
+
+    # configuration settings are loaded through the from_object() method
     app.config.from_object(config_class)
+
+    # he configuration class init_app() static method
+    # is called to do any remaining setup for the app
     config_class.init_app(app)
     @app.route('/')
     def index():
