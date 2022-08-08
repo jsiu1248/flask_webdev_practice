@@ -30,3 +30,5 @@ def create_app(config_name='default'):
     return app
 
 new_app = create_app()
+
+
