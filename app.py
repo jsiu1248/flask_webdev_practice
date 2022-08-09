@@ -1,4 +1,4 @@
-# commenting this out so that __init__.py can run 
+# commenting this out so that __init__.py can run
 """
 from datetime import date
 from wsgiref.validate import validator
@@ -157,10 +157,11 @@ def zodiac():
     #
     return render_template('zodiac.html', form = form, name = session.get('name'),
     date_year=session.get('date_year'))
-
+"""
+"""
 def zodiac_year(user_date):
-    """Find zodiac animal based on birth year.
-    The input is a datetime object and the output is a string."""
+    # Find zodiac animal based on birth year.
+    # The input is a datetime object and the output is a string.
 
     zodiac_dict = {"Rat":1948, "Ox":1949, "Tiger":1950, "Rabbit":1951, "Dragon":1952,
     "Snake":1953, "Horse":1954, "Goat":1955, "Monkey":1956, "Rooster":1957, "Dog":1958,"Pig":1959}
