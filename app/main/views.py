@@ -5,7 +5,7 @@ from . import main
 #from flask import Blueprint, render_template
 #from .forms import NameForm
 
-main=Blueprint('main',__name__)
+# main=Blueprint('main',__name__)
 
 @main.route('/', methods=["GET", "POST"])
 def index():
