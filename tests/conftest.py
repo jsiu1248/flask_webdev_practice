@@ -2,11 +2,18 @@
 import pytest
 from app import db, create_app
 
-@pytest.fixture
-def new_app(scope = 'module'):
+@pytest.fixture(scope = 'module') # the scope is module so all tests that use the fixture will use the test app instance
+def new_app():
+    """
+    Tests that the database works when creating an app with the testing config.
+    """
     # create an instance of the app
     app = create_app('testing')
 
+    assert 'data-test.sqlite' in app.config['SQLALCHEMY_DATABASE_URI']
+    test_client = app.test_client() # why is test_client needed
+
+    # he called it ctx. What does that stand for?
     # create app_context
     context = app.app_context()
 
@@ -17,12 +24,12 @@ def new_app(scope = 'module'):
     db.create_all()
 
     # yield an app instance
-    yield app
+    yield test_client
 
     # tear down database
-    db.clean_up()
-    db.drop_all()
+    db.session.remove()
+    db.drop_all() # why is teardown this way?
 
     # tear down app_context
-    app.clean_up()
+    app.pop() # how does it work?
 
