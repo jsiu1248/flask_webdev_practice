@@ -27,6 +27,9 @@ def new_app():
     yield test_client
 
     # tear down database
+    # IMPORTANT clear database for future tests
+    # it is good to know that your tests begin with a clean or known state
+    # app won't be changing but db would be changing 
     db.session.remove()
     db.drop_all() # why is teardown this way?
 
