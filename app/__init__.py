@@ -22,6 +22,8 @@ def create_app(config_name='default'):
     # is called to do any remaining setup for the app
     config_class.init_app(app)
     @app.route('/')
+
+    #TODO remove this index function as it is extra
     def index():
          # Code for index route...
         """
