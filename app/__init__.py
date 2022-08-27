@@ -26,6 +26,7 @@ def create_app(config_name='default'):
     # he configuration class init_app() static method
     # is called to do any remaining setup for the app
     config_class.init_app(app)
+    db.init_app(app)
 
     """
 
