@@ -4,6 +4,7 @@
 from . import main # from this package import main object
 from flask import render_template
 from .forms import NameForm # need a period because trying to import within package
+from ..models import User, Role
 
 @main.route('/', methods=["GET", "POST"])
 def index():
