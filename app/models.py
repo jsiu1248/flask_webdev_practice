@@ -1,6 +1,8 @@
  
 from . import db 
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask import current_app
+
 
 class Role(db.Model):
     __tablename__='roles'
