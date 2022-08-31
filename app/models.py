@@ -19,7 +19,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64), unique = True, index = True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    age = db.Column(db.Integer)
+    # age = db.Column(db.Integer)
     password_hash = db.Column(db.String(128))
 
     # errors out when someone tries to read it
