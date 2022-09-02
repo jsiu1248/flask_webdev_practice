@@ -12,6 +12,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
+login_manager = LoginManager()
 
 """
 Database Models...
