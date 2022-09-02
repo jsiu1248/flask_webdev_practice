@@ -20,3 +20,11 @@ def index():
 @main.route('/user/<username>')
 def user(username):
     return render_template("user.html", user_name=username)
+
+@main.route('/login')
+def login():
+    return render_template("login.html")
+
+main.route('/register')
+def register():
+    return render_template('register.html')
