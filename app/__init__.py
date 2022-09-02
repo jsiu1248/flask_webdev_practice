@@ -14,6 +14,9 @@ bootstrap = Bootstrap()
 migrate = Migrate()
 login_manager = LoginManager()
 
+# view function that acts like the login page
+login_manager.login_view = 'auth.login'
+
 """
 Database Models...
 LoginManager User Loader...
@@ -30,6 +33,7 @@ def create_app(config_name='default'):
     config_class.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
     
     # configuration settings are loaded through the from_object() method
     app.config.from_object(config_class)
