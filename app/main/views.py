@@ -6,6 +6,7 @@ from flask import render_template
 from .forms import NameForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role
+from flask_login import login_required
 
 # @app.shell_context_processor
 # def make_shell_context():
