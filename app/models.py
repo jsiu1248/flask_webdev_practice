@@ -22,6 +22,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     # age = db.Column(db.Integer)
     password_hash = db.Column(db.String(128))
+    email = db.Column(db.String(64), unique = True, index = True)
 
     # errors out when someone tries to read it
     @property

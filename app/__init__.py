@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from config import configs
 from flask_migrate import Migrate
+from flask_login import LoginManager
 # from .models import User, Role
 
 
