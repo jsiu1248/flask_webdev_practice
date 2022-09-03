@@ -25,7 +25,6 @@ def create_app(config_name='default'):
     app = Flask(__name__)
 
 
-
     # old way: app.config.from_pyfile('config.py')
     config_class = configs[config_name]
     
@@ -33,6 +32,7 @@ def create_app(config_name='default'):
     config_class.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    bootstrap.init_app(app)
     login_manager.init_app(app)
     
     # configuration settings are loaded through the from_object() method

@@ -7,6 +7,7 @@ from .forms import NameForm # need a period because trying to import within pack
 from .. import db
 from ..models import User, Role
 from flask_login import login_required
+from flask_bootstrap import Bootstrap
 
 # @app.shell_context_processor
 # def make_shell_context():
