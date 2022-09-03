@@ -29,3 +29,8 @@ def login():
 main.route('/register')
 def register():
     return render_template('register.html')
+
+@main.route('/top-secret')
+@login_required
+def top_secret():
+    return "Welcome, VIP member!"
