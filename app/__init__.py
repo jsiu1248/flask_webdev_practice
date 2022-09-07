@@ -15,7 +15,7 @@ migrate = Migrate()
 login_manager = LoginManager()
 
 # view function that acts like the login page
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'auth.login'
 
 """
 Database Models...
