@@ -15,7 +15,7 @@ migrate = Migrate()
 login_manager = LoginManager()
 
 # view function that acts like the login page
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'main.login'
 
 """
 Database Models...
@@ -38,10 +38,11 @@ def create_app(config_name='default'):
     # configuration settings are loaded through the from_object() method
     app.config.from_object(config_class)
     
-    from .main import main  # curly braces mean package in vscode
-    app.register_blueprint(main)
-    from .auth import auth  # curly braces mean package in vscode
-    app.register_blueprint(auth)
+    from .main import main as main_blueprint  # curly braces mean package in vscode
+    app.register_blueprint(main_blueprint)
+    
+    from .auth import auth as auth_blueprint # curly braces mean package in vscode
+    app.register_blueprint(auth_blueprint)
 
     # he configuration class init_app() static method
     # is called to do any remaining setup for the app

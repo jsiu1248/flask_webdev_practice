@@ -2,7 +2,6 @@
 # can't just import like normal because we are in a Blueprint
 # have to do it in a way that it records the actions
 from . import main # from this package import main object
-from . import auth
 from flask import render_template, session, redirect, url_for, flash
 from .forms import NameForm # need a period because trying to import within package
 from .. import db
@@ -24,13 +23,7 @@ def index():
 def user(username):
     return render_template("user.html", user_name=username)
 
-@auth.route('/login')
-def login():
-    return render_template("auth/login.html")
 
-@auth.route('/register')
-def register():
-    return render_template('auth/register.html')
 
 @main.route('/top-secret')
 @login_required
