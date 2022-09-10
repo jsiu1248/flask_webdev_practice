@@ -12,9 +12,14 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
+
+# instance of LoginManager
 login_manager = LoginManager()
 
 # view function that acts like the login page
+# login_view attribute is set
+# property specifies endpoint that LoginManger will direct a user if the user tried to access a protected page
+# cam direct anonymous user to login page
 login_manager.login_view = 'auth.login'
 
 """
