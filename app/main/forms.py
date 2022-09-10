@@ -8,3 +8,4 @@ class NameForm(FlaskForm):
     #stores as a datetime.date
     birthday = DateField("What is your birthday?", format='%Y-%m-%d', validators=[DataRequired()])
     submit = SubmitField("Submit")
+
