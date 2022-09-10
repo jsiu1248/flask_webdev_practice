@@ -41,6 +41,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     # login manager needs help with getting users
+    # LoginManager will call load_user() to find out info about users
     # takes an id and returns the user
     @login_manager.user_loader
     def load_user(user_id):
