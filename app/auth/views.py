@@ -13,16 +13,20 @@ def login():
     form = LoginForm()
 
     # form is validated
-
+    if form.validate_on_submit():
         # query database for user
+        email_entered = form.email.data
+        # query checking if the name is in the database
+        user = LoginForm.query.filter_by(email = email_entered).first()
+
         # if user exists and the password is correct
-            login_user(user, form.remember_me.data)
-            next = request.args.get('next')
-            if next is None or not next.startswith('/'):
-                next = url_for('main.index')
-            return redirect(next)
-    return render_template("auth/login.html", form = form
-    )
+        login_user(user, form.remember_me.data)
+        next = request.args.get('next')
+        if next is None or not next.startswith('/'):
+            next = url_for('main.index')
+        return redirect(next)
+        # flash a message that username/password is invalid
+    return render_template("auth/login.html", form = form)
 
 @auth.route('/register', methods=["GET", "POST"])
 def register():
