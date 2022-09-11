@@ -17,7 +17,6 @@ from flask_sqlalchemy import SQLAlchemy
 @main.route('/', methods=["GET", "POST"])
 def index():
     form = NameForm()
-    # more code for index route...
 
     if form.validate_on_submit():
         # name=None # we need a session variable now instead
