@@ -5,6 +5,7 @@ from .. import db
 from ..models import User, Role
 from flask_login import login_required, logout_user, login_user
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
 from . import auth
 
 @auth.route('/login' , methods=["GET", "POST"])
@@ -26,6 +27,7 @@ def login():
             next = url_for('main.index')
         return redirect(next)
         # flash a message that username/password is invalid
+    flash("The username/password is invalid")
     return render_template("auth/login.html", form = form)
 
 @auth.route('/register', methods=["GET", "POST"])
