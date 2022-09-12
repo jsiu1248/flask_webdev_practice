@@ -17,17 +17,19 @@ def login():
     if form.validate_on_submit():
         # query database for user
         email_entered = form.email.data
+        password_entered = form.password.data
         # query checking if the name is in the database
-        user = LoginForm.query.filter_by(email = email_entered).first()
-
+        user = User.query.filter_by(email = email_entered).first()
+        print(user)
         # if user exists and the password is correct
-        login_user(user, form.remember_me.data)
-        next = request.args.get('next')
-        if next is None or not next.startswith('/'):
-            next = url_for('main.index')
-        return redirect(next)
-        # flash a message that username/password is invalid
-    flash("The username/password is invalid")
+        if user and user.verify_password(password_entered):
+            login_user(user, form.remember_me.data)
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('main.index')
+            return redirect(next)
+            # flash a message that username/password is invalid
+        flash("The username/password is invalid")
     return render_template("auth/login.html", form = form)
 
 @auth.route('/register', methods=["GET", "POST"])
