@@ -32,7 +32,7 @@ def login():
         flash("The username/password is invalid")
     return render_template("auth/login.html", form = form)
 
-@auth.route('/register', methods=["POST"])
+@auth.route('/register', methods=["GET","POST"])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -41,7 +41,7 @@ def register():
         db.session.commit()
         flash("You can now login.")
         return redirect(url_for('main.index'))
-    return render_template('auth/register.html')
+    return render_template('auth/register.html', form = form)
 
 @auth.route('/logout')
 def logout():
