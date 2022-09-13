@@ -1,5 +1,5 @@
 from flask import render_template, session, redirect, url_for, flash, current_app, request
-from .forms import LoginForm # need a period because trying to import within package
+from .forms import LoginForm, RegistrationForm # need a period because trying to import within package
 from flask_login import login_user
 from .. import db
 from ..models import User, Role
@@ -32,8 +32,15 @@ def login():
         flash("The username/password is invalid")
     return render_template("auth/login.html", form = form)
 
-@auth.route('/register', methods=["GET", "POST"])
+@auth.route('/register', methods=["POST"])
 def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        u = User(form.email.data, form.password.data)
+        db.session.add(u)
+        db.session.commit()
+        flash("You can now login.")
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html')
 
 @auth.route('/logout')
