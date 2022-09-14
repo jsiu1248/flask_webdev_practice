@@ -24,6 +24,11 @@ def login():
         # if user exists and the password is correct
         if user and user.verify_password(password_entered):
             login_user(user, form.remember_me.data)
+
+            # query string is part of a url
+            # pass arguments to a url 
+            # variable tell flask where to go after the user logs in
+            # google.com/?auth=ramble&key=value 
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')

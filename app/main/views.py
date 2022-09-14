@@ -1,6 +1,7 @@
 
 # can't just import like normal because we are in a Blueprint
 # have to do it in a way that it records the actions
+# may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
 from flask import render_template, session, redirect, url_for, flash
 from .forms import NameForm # need a period because trying to import within package

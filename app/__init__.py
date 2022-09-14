@@ -20,7 +20,13 @@ login_manager = LoginManager()
 # login_view attribute is set
 # property specifies endpoint that LoginManger will direct a user if the user tried to access a protected page
 # cam direct anonymous user to login page
+# if there is login_required decorator
+# since there are blueprints then have to direct it to the right place with a dot
+# without setting attribute then it will fail sometime
+# not making assumptions of login page
 login_manager.login_view = 'auth.login'
+
+
 
 """
 Database Models...
@@ -34,13 +40,19 @@ def create_app(config_name='default'):
     config_class = configs[config_name]
     
     # initalize bootstrap and the db connection
+    # not all init_app does the same thing
+    # think of more my app using the extension
+    # initalize app with all of the things that sqlachelmy requires it to work
     config_class.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # set it up for flask all of the JS and quickform and templates
     bootstrap.init_app(app)
     login_manager.init_app(app)
     
     # configuration settings are loaded through the from_object() method
+    # taking classes members into a dictionary
     app.config.from_object(config_class)
     
     from .main import main as main_blueprint  # curly braces mean package in vscode
@@ -64,6 +76,3 @@ def create_app(config_name='default'):
         return 'hello this is the index'
     """
     return app
-
-new_app = create_app()
-
