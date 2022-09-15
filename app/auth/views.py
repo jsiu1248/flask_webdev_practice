@@ -41,7 +41,20 @@ def login():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        u = User(form.email.data, form.password.data)
+        email_entered = form.email.data
+        password_entered = form.password.data
+        username_entered = form.username.data
+        # query checking if the name is in the database
+        user = User.query.filter_by(email = email_entered).first()
+
+        # it auto checks if the email is used already and same for the username
+
+
+        u = User()
+        u.email = email_entered
+        u.username = username_entered
+        u.password = password_entered
+
         db.session.add(u)
         db.session.commit()
         flash("You can now login.")
