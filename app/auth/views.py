@@ -1,6 +1,5 @@
 from flask import render_template, session, redirect, url_for, flash, current_app, request
 from .forms import LoginForm, RegistrationForm # need a period because trying to import within package
-from flask_login import login_user
 from .. import db
 from ..models import User, Role
 from flask_login import login_required, logout_user, login_user
