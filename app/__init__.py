@@ -28,10 +28,6 @@ login_manager.login_view = 'auth.login'
 
 
 
-"""
-Database Models...
-LoginManager User Loader...
-"""
 def create_app(config_name='default'):
     app = Flask(__name__)
 
@@ -65,14 +61,4 @@ def create_app(config_name='default'):
     # is called to do any remaining setup for the app
  
 
-    """
-
-
-    #TODO remove this index function as it is extra
-    @app.route('/')
-    def index_app():
-         # Code for index route...
-        
-        return 'hello this is the index'
-    """
     return app
