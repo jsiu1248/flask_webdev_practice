@@ -10,6 +10,21 @@ class Config:
     SQLALCHEMY_DATABASE_URI =\
          'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+        # Flask-Mail config
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+
+    # Other email settings
+    RAGTIME_ADMIN = os.environ.get('RAGTIME_ADMIN')
+    RAGTIME_MAIL_SUBJECT_PREFIX = 'Ragtime — '
+    RAGTIME_MAIL_SENDER = f'Ragtime Admin <{RAGTIME_ADMIN}>'
+
+    # export MAIL_USERNAME=<your Gmail username>
+    # export MAIL_PASSWORD=<your Gmail app password>
+
     @staticmethod
     def init_app(app):
         pass
