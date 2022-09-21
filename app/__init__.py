@@ -5,6 +5,7 @@ import os
 from config import configs
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_mail import Mail
 # from .models import User, Role
 
 
@@ -12,6 +13,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
+mail = Mail()
 
 # instance of LoginManager
 login_manager = LoginManager()
@@ -46,6 +48,7 @@ def create_app(config_name='default'):
     # set it up for flask all of the JS and quickform and templates
     bootstrap.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
     
     # configuration settings are loaded through the from_object() method
     # taking classes members into a dictionary

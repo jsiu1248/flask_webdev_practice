@@ -18,12 +18,18 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
     # Other email settings
+    # email for the administrator of the flask app
     RAGTIME_ADMIN = os.environ.get('RAGTIME_ADMIN')
+
+    # this will be the prefix everytime an emails is sent
     RAGTIME_MAIL_SUBJECT_PREFIX = 'Ragtime — '
+
+    # when an email is sent to a user, it is set to this value
     RAGTIME_MAIL_SENDER = f'Ragtime Admin <{RAGTIME_ADMIN}>'
 
     # export MAIL_USERNAME=<your Gmail username>
     # export MAIL_PASSWORD=<your Gmail app password>
+    # don't include spaces. It didn't like it
 
     @staticmethod
     def init_app(app):
