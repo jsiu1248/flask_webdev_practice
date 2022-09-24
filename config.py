@@ -28,6 +28,7 @@ class Config:
     RAGTIME_MAIL_SENDER = f'Ragtime Admin <{RAGTIME_ADMIN}>'
 
     # export MAIL_USERNAME=<your Gmail username>
+    # remember to change it to your app password
     # export MAIL_PASSWORD=<your Gmail app password>
     # don't include spaces. It didn't like it
 
