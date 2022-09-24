@@ -35,16 +35,16 @@ class Role(db.Model):
 
     # helper function to help with permissions
     # checking if there is a permission and then adding it if there is NOT
-    def add_permissions(self, perm):
+    def add_permission(self, perm):
         if not self.has_permission(perm):
             self.permissions = self.permissions + perm
     
     # checking if there is a permission then substracting if there IS 
-    def remove_permissions(self, perm):
+    def remove_permission(self, perm):
         if self.has_permission(perm):
             self.permissions = self.permissions - perm
 
-    def reset_permissions(self):
+    def reset_permission(self):
         self.permissions = 0
 
     # check if role has a particular permission
