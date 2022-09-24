@@ -11,6 +11,17 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique = True)
     # linking the role model and the user model
     users = db.relationship('User', backref='role', lazy = 'dynamic')
+    default = db.Column(db.Boolean, default = False, index = True)
+    permissions = db.Column(db.Integer)
+
+    # overriding constructor of the Role class
+    # so, we can set Permissions to 0, if the permissions were not initially set
+    def __init__ (self, **kwargs):
+        super().__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
+
+
     # returning a string with the name
     def __repr__(self):
         return f"<Role {self.name}>"
