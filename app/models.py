@@ -33,6 +33,25 @@ class Role(db.Model):
     def __repr__(self):
         return f"<Role {self.name}>"
 
+    # helper function to help with permissions
+    # checking if there is a permission and then adding it if there is NOT
+    def add_permissions(self, perm):
+        if not self.has_permission(perm):
+            self.permissions = self.permissions + perm
+    
+    # checking if there is a permission then substracting if there IS 
+    def remove_permissions(self, perm):
+        if self.has_permission(perm):
+            self.permissions = self.permissions - perm
+
+    def reset_permissions(self):
+        self.permissions = 0
+
+    # check if role has a particular permission
+    # if the permission is greater than 0 then it has a particular permission
+    def has_permission(self, perm):
+        return self.permissions & perm == perm
+    
 class User(UserMixin, db.Model):
     __tablename__='users'
     id = db.Column(db.Integer, primary_key = True)
