@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
 from flask_login import UserMixin
 
-
+# They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
     FOLLOW = 1
     REVIEW = 2
@@ -32,6 +32,42 @@ class Role(db.Model):
     # returning a string with the name
     def __repr__(self):
         return f"<Role {self.name}>"
+
+    # help automate main roles for app
+    # mapping of role names with their permissions
+    # as long as it doesn't find a role with the same name, it will add it and won't duplicate
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'User':             [Permission.FOLLOW,
+                                 Permission.REVIEW,
+                                 Permission.PUBLISH],
+            'Moderator':        [Permission.FOLLOW,
+                                 Permission.REVIEW,
+                                 Permission.PUBLISH,
+                                 Permission.MODERATE],
+            'Administrator':    [Permission.FOLLOW,
+                                 Permission.REVIEW,
+                                 Permission.PUBLISH,
+                                 Permission.MODERATE,
+                                 Permission.ADMIN],
+        }
+        default_role = 'User'
+        for r in roles:
+            # see if role is already in table
+            role = Role.query.filter_by(name=r).first()
+            if role is None:
+                # it's not so make a new one
+                role = Role(name=r)
+            role.reset_permissions()
+            # add whichever permissions the role needs
+            for perm in roles[r]:
+                role.add_permission(perm)
+            # if role is the default one, default is True
+            role.default = (role.name == default_role)
+            db.session.add(role)
+        db.session.commit()
+
 
     # helper function to help with permissions
     # checking if there is a permission and then adding it if there is NOT
