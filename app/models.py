@@ -5,6 +5,13 @@ from flask import current_app
 from flask_login import UserMixin
 
 
+class Permission:
+    FOLLOW = 1
+    REVIEW = 2
+    PUBLISH = 4
+    MODERATE = 8
+    ADMIN = 16
+
 class Role(db.Model):
     __tablename__='roles'
     id = db.Column(db.Integer, primary_key = True)
