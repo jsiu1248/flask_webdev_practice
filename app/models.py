@@ -1,4 +1,5 @@
  
+from email.policy import default
 from . import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
@@ -59,7 +60,7 @@ class Role(db.Model):
             if role is None:
                 # it's not so make a new one
                 role = Role(name=r)
-            role.reset_permissions()
+            role.reset_permission()
             # add whichever permissions the role needs
             for perm in roles[r]:
                 role.add_permission(perm)
@@ -96,6 +97,20 @@ class User(UserMixin, db.Model):
     # age = db.Column(db.Integer)
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(64), unique = True, index = True)
+    confirmed = db.Column(db.Boolean, default = False)
+
+    # we want to assign the users their roles right away
+    # user constructor
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # checking if it is ADMIN, and it is then giving it the admin role
+        if self.role is None:
+            if self.email == current_app.config['RAGTIM_ADMIN']:
+                self.role = Role.query.filter_by(name = 'Administrator').first()
+            # if not an admin then it gets a normal user role
+            if self.role is None:
+                self.role = Role.query.filter_by(default = True).first()
+
 
     # errors out when someone tries to read it
     @property
@@ -112,6 +127,25 @@ class User(UserMixin, db.Model):
     # it takes the password and hash together and returns true if correct
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # check if user can do something
+    def can(self, perm):
+        return self.role is not None and self.role.has_permission(perm)
+
+
+    # check if the user is an admin
+    def is_administrator(self):
+        return self.can(Permission.ADMIN)
+
+    # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
+    class AnonymousUser(AnonymousUserMixin):
+        def can(self, perm):
+            return False
+        def is_administrator(self):
+            return False
+    
+    # have to let login_manager know about the new class through the anonymous_user attribute
+    login_manager.anonymous_user = AnonymousUser
 
     # login manager needs help with getting users
     # LoginManager will call load_user() to find out info about users
