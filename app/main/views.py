@@ -6,14 +6,27 @@ from . import main # from this package import main object
 from flask import render_template, session, redirect, url_for, flash
 from .forms import NameForm # need a period because trying to import within package
 from .. import db
-from ..models import User, Role
+from ..models import User, Role, Permission
 from flask_login import login_required
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from ..decorators import permission_required, admin_required
 
 # @app.shell_context_processor
 # def make_shell_context():
 #     return dict(db=db, User=User, Role=Role)
+
+@main.route('/admin')
+@login_required
+@admin_required
+def for_admins_only():
+    return "Welcome, Administrator!"
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE)
+def for_moderators_only():
+    return "Greetings, moderator!"
 
 @main.route('/', methods=["GET", "POST"])
 def index():
