@@ -16,6 +16,11 @@ from ..decorators import permission_required, admin_required
 # def make_shell_context():
 #     return dict(db=db, User=User, Role=Role)
 
+# route comes first
+# check if user is authenticated
+# check permission
+# topmost decorators are evaluated before the others
+
 @main.route('/admin')
 @login_required
 @admin_required

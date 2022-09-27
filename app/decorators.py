@@ -5,7 +5,7 @@ from .models import Permission
 
 # can add new decorators that restrict access to routes bases on permissions
 
-# decorator takes permission
+# decorator takes permission and checks
 def permission_required(permission):
     def decorator(f):
         @wraps(f)
@@ -17,5 +17,6 @@ def permission_required(permission):
         return decorated_function
     return decorator
 
+# piggy backs on the other decorator and checks if user has ADMIN permission
 def admin_required(f):
     return permission_required(Permission.ADMIN)(f)
