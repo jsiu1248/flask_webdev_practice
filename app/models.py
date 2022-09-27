@@ -3,7 +3,7 @@ from email.policy import default
 from . import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime, timedelta
 import jwt
 
@@ -150,6 +150,7 @@ class User(UserMixin, db.Model):
         token = jwt.encode(data, current_app.secret_key, algorithm="HS512")
         return token
 
+    # checks whether token is valid or not for user and have to make sure that they are logged in
     def confirm(self, token):
         try:
             # Ensure token valid and hasn't expired
@@ -170,14 +171,17 @@ class User(UserMixin, db.Model):
         return True
 
     # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
-    # class AnonymousUser(AnonymousUserMixin):
-    #     def can(self, perm):
-    #         return False
-    #     def is_administrator(self):
-    #         return False
+    # define the same methods as User to prevent any NameErrors where local or global name is not found
+    class AnonymousUser(AnonymousUserMixin):
+        # checking that a user has a given permission and can perform a task
+        def can(self, perm):
+            return False
+        def is_administrator(self):
+            return False
     
-    # # have to let login_manager know about the new class through the anonymous_user attribute
-    # login_manager.anonymous_user = AnonymousUser
+    # have to let login_manager know about the new class through the anonymous_user attribute
+    # why does this need to be done again? Since in the definition is already named AnonymousUser
+    login_manager.anonymous_user = AnonymousUser
 
     # login manager needs help with getting users
     # LoginManager will call load_user() to find out info about users
