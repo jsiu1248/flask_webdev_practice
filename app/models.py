@@ -4,6 +4,8 @@ from . import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
 from flask_login import UserMixin
+from datetime import datetime, timedelta
+import jwt
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
@@ -137,6 +139,8 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMIN)
 
+    # generates a token 
+    # exp controls the time of expiration
     def generate_confirmation_token(self, expiration_sec=3600):
         # For jwt.encode(), expiration is provided as a time in UTC
         # It is set through the "exp" key in the data to be tokenized
