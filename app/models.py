@@ -137,15 +137,43 @@ class User(UserMixin, db.Model):
     def is_administrator(self):
         return self.can(Permission.ADMIN)
 
+    def generate_confirmation_token(self, expiration_sec=3600):
+        # For jwt.encode(), expiration is provided as a time in UTC
+        # It is set through the "exp" key in the data to be tokenized
+        expiration_time = datetime.utcnow() + timedelta(seconds=expiration_sec)
+        data = {"exp": expiration_time, "confirm_id": self.id}
+        # Use SHA-512 (known as HS512) for the hash algorithm
+        token = jwt.encode(data, current_app.secret_key, algorithm="HS512")
+        return token
+
+    def confirm(self, token):
+        try:
+            # Ensure token valid and hasn't expired
+            data = jwt.decode(token, current_app.secret_key, algorithms=["HS512"])
+        except jwt.ExpiredSignatureError as e:
+            # token expired
+            return False
+        except jwt.InvalidSignatureError as e:
+            # key does not match
+            return False
+        # The token's data must match the user's ID
+        if data.get("confirm_id") != self.id:
+            return False
+        # All checks pass, confirm the user
+        self.confirmed = True
+        db.session.add(self)
+        # the data isn't committed yet as you want to make sure the user is currently logged in.
+        return True
+
     # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
-    class AnonymousUser(AnonymousUserMixin):
-        def can(self, perm):
-            return False
-        def is_administrator(self):
-            return False
+    # class AnonymousUser(AnonymousUserMixin):
+    #     def can(self, perm):
+    #         return False
+    #     def is_administrator(self):
+    #         return False
     
-    # have to let login_manager know about the new class through the anonymous_user attribute
-    login_manager.anonymous_user = AnonymousUser
+    # # have to let login_manager know about the new class through the anonymous_user attribute
+    # login_manager.anonymous_user = AnonymousUser
 
     # login manager needs help with getting users
     # LoginManager will call load_user() to find out info about users
