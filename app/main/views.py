@@ -25,7 +25,7 @@ from ..decorators import permission_required, admin_required
 @login_required
 @admin_required
 def for_admins_only():
-    return "Welcome, Administrator!"
+    return f"Welcome, Administrator! {Permission.ADMIN}"
 
 @main.route('/moderate')
 @login_required

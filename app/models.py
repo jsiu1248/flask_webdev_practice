@@ -107,7 +107,7 @@ class User(UserMixin, db.Model):
         super().__init__(**kwargs)
         # checking if it is ADMIN, and it is then giving it the admin role
         if self.role is None:
-            if self.email == current_app.config['RAGTIM_ADMIN']:
+            if self.email == current_app.config['RAGTIME_ADMIN']:
                 self.role = Role.query.filter_by(name = 'Administrator').first()
             # if not an admin then it gets a normal user role
             if self.role is None:
