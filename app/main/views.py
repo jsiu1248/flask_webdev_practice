@@ -21,12 +21,14 @@ from ..decorators import permission_required, admin_required
 # check permission
 # topmost decorators are evaluated before the others
 
+# route will require login and user to be an administrator
 @main.route('/admin')
 @login_required
 @admin_required
 def for_admins_only():
     return f"Welcome, Administrator! {Permission.ADMIN}"
 
+# route will require login and the user to have moderate permissions
 @main.route('/moderate')
 @login_required
 @permission_required(Permission.MODERATE)
@@ -60,15 +62,17 @@ def index():
         #whenever a post function happens then you can go back to get function so it doesn't error
         flash('Please enjoy this place!')
         return redirect(url_for('index'))
+
+    # session is imported by flask and the get function for key value access     
     return render_template('index.html', form=form, name=session.get('name'), known = session.get('known', False))
 
-
+# route will pass user_name variable
 @main.route('/user/<username>')
 def user(username):
     return render_template("user.html", user_name=username)
 
 
-
+# route will require login
 @main.route('/top-secret')
 @login_required
 def top_secret():
