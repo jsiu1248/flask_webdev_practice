@@ -7,6 +7,11 @@ from .models import Permission
 
 # decorator takes permission and checks
 def permission_required(permission):
+    """ Function decorator used so that only those
+    who have been confirmed can access
+
+    Args: permission (int): The permission given based on the list in Perission class from app.models 
+    """
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -19,4 +24,6 @@ def permission_required(permission):
 
 # piggy backs on the other decorator and checks if user has ADMIN permission
 def admin_required(f):
+    """ Function decorator that only admins can access
+    """
     return permission_required(Permission.ADMIN)(f)
