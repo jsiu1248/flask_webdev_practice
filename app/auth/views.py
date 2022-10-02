@@ -2,7 +2,7 @@ from flask import render_template, session, redirect, url_for, flash, current_ap
 from .forms import LoginForm, RegistrationForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role
-from flask_login import login_required, logout_user, login_user
+from flask_login import login_required, logout_user, login_user, current_user
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from . import auth
@@ -64,4 +64,21 @@ def register():
 def logout():
     logout_user()
     flash("You've been logged out successfully")
+    return redirect(url_for('main.index'))
+
+# take a token and attempt to confirm the user and then redirect it back to the index page
+# we want this to confirm the current_user because we don't want an old user
+@auth.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        flash("You're already confirmed, silly!")
+        return redirect(url_for('main.index'))
+    
+    # if the token is confirmed then the user is commited 
+    if current_user.confirm(token):
+        db.session.commit()
+        flash('You have confirmed your account! Thank you.')
+    else:
+        flash("Whoops! That confirmation link either expired, or it isn't valid.")
     return redirect(url_for('main.index'))
