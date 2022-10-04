@@ -66,7 +66,7 @@ def register():
         # url_for helps create dynamic links
         # _external = True in Flask Mail tells it to generate an absolute link
         confirmation_link = url_for('auth/confirm', token = token, _external = True)
-        send_email(u.email, "You've got mail!", 'auth/confirm', user=u, confirmation_link = confirmation_link)
+        send_email(u.email, "You've got mail!", 'auth.confirm', user=u, confirmation_link = confirmation_link)
         flash("You can now login.")
         return redirect(url_for('main.index'))
     return render_template('auth/register.html', form = form)
