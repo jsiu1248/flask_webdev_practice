@@ -12,8 +12,9 @@ def permission_required(permission):
 
     Args: permission (int): The permission given based on the list in Perission class from app.models 
     """
-    def decorator(f):
-        @wraps(f)
+    # 16 to 23 decorator function takes function to decorator 
+    def decorator(f): # f is the function I'm decorating
+        @wraps(f) # wraps is a helper function
         def decorated_function(*args, **kwargs):
             # check if use has that permission
             if not current_user.can(permission):

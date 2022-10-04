@@ -29,6 +29,7 @@ def login():
             # variable tell flask where to go after the user logs in
             # google.com/?auth=ramble&key=value 
             next = request.args.get('next')
+
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
@@ -82,3 +83,20 @@ def confirm(token):
     else:
         flash("Whoops! That confirmation link either expired, or it isn't valid.")
     return redirect(url_for('main.index'))
+
+@auth.before_app_request
+def before_request():
+    # back slash means line continuation
+    if current_user.is_authenticated \
+        and not current_user.confirmed \
+        and request != 'static' \
+        and request.blueprint != 'auth' \
+        and request.endpoint != 'static':
+        return redirect(url_for('auth.unconfirmed'))
+
+
+@auth.route('/unconfirmed')
+def unconfirmed():
+    if current_user.is_anonymous or current_user.confirmed:
+        return redirect(url_for('main.index'))
+    return render_template('auth/unconfirmed.html', user=current_user)

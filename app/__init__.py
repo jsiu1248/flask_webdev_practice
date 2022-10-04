@@ -42,6 +42,9 @@ def create_app(config_name='default'):
     # think of more my app using the extension
     # initalize app with all of the things that sqlachelmy requires it to work
     config_class.init_app(app)
+    # loading config before extensions use it
+    app.config.from_object(config_class)
+
     db.init_app(app)
     migrate.init_app(app, db)
 
@@ -52,7 +55,6 @@ def create_app(config_name='default'):
     
     # configuration settings are loaded through the from_object() method
     # taking classes members into a dictionary
-    app.config.from_object(config_class)
     
     from .main import main as main_blueprint  # curly braces mean package in vscode
     app.register_blueprint(main_blueprint)
