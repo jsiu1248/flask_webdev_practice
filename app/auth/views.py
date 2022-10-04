@@ -66,7 +66,7 @@ def register():
         # url_for helps create dynamic links
         # _external = True in Flask Mail tells it to generate an absolute link
         confirmation_link = url_for('auth.confirm', token = token, _external = True)
-        send_email(u.email, "You've got mail!", 'auth/confirm', user=u, confirmation_link = confirmation_link)
+        send_email(u.email, "Confirmation email!", 'auth/confirm', user=u, confirmation_link = confirmation_link)
         flash("You can now login.")
         return redirect(url_for('main.index'))
     return render_template('auth/register.html', form = form)
@@ -110,3 +110,23 @@ def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html', user=current_user)
+
+@auth.route('/resend_confirmation')
+def resend_confirmation():
+    """
+    Function that resends confirmation link to the user's email
+
+    Returns: Redirects to the auth/unconfirmed page
+    """
+
+    # u is the user before, but now Flask tracks it with current_user
+    user = current_user
+
+    token = user.generate_confirmation_token()
+
+    # url_for helps create dynamic links
+    # _external = True in Flask Mail tells it to generate an absolute link
+    confirmation_link = url_for('auth.confirm', token = token, _external = True)
+    send_email(user.email, "Reconfirmation Email!", 'auth/confirm', user=u, confirmation_link = confirmation_link)
+    flash("Check your email for the reconfirmation email.")
+    return redirect(url_for('auth.unconfirmed'))

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<h2>Welcome to Ragtime, {user.name}</h2>
+<p>Please confirm your account with this link: <a href='{{ confirmation_link }}'>Confirm Account</a></p>
