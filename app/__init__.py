@@ -41,9 +41,10 @@ def create_app(config_name='default'):
     # not all init_app does the same thing
     # think of more my app using the extension
     # initalize app with all of the things that sqlachelmy requires it to work
-    config_class.init_app(app)
     # loading config before extensions use it
     app.config.from_object(config_class)
+
+    config_class.init_app(app)
 
     db.init_app(app)
     migrate.init_app(app, db)

@@ -106,6 +106,8 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # checking if it is ADMIN, and it is then giving it the admin role
+        print(current_app.config['RAGTIME_ADMIN'])
+
         if self.role is None:
             if self.email == current_app.config['RAGTIME_ADMIN']:
                 self.role = Role.query.filter_by(name = 'Administrator').first()

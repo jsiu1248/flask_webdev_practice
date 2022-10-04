@@ -1,4 +1,6 @@
 from flask import render_template, session, redirect, url_for, flash, current_app, request
+
+from app.email import send_email
 from .forms import LoginForm, RegistrationForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role
@@ -57,6 +59,7 @@ def register():
 
         db.session.add(u)
         db.session.commit()
+        send_email(u.email, "You've got mail!", 'auth/confirm', user=u)
         flash("You can now login.")
         return redirect(url_for('main.index'))
     return render_template('auth/register.html', form = form)
