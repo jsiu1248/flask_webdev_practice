@@ -6,6 +6,7 @@ from config import configs
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_moment import Moment
 # from .models import User, Role
 
 
@@ -14,6 +15,7 @@ db = SQLAlchemy()
 bootstrap = Bootstrap()
 migrate = Migrate()
 mail = Mail()
+moment = Moment()
 
 # instance of LoginManager
 login_manager = LoginManager()
@@ -45,7 +47,7 @@ def create_app(config_name='default'):
     app.config.from_object(config_class)
 
     config_class.init_app(app)
-
+    moment.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
 
