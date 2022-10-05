@@ -103,51 +103,51 @@ def confirm(token):
 
 # you can restrict a user's access to app for users who are not confirmed
 # view function before any other view function
-@auth.before_app_request
-def before_request():
-    """
-    Returns: unconfirmed page if user is unconfirmed
-    """
-    # back slash means line continuation
-    # they must be signed in and not confirmed and the endpoint is in the auth blueprint
-    if current_user.is_authenticated:
-        # ping is called everytime a request is made
-        current_user.ping()
-        if not current_user.confirmed \
-                and request.endpoint \
-                and request.blueprint != 'auth' \
-                and request.endpoint != 'static':
-            return redirect(url_for('auth.unconfirmed'))
+# @auth.before_app_request
+# def before_request():
+#     """
+#     Returns: unconfirmed page if user is unconfirmed
+#     """
+#     # back slash means line continuation
+#     # they must be signed in and not confirmed and the endpoint is in the auth blueprint
+#     if current_user.is_authenticated:
+#         # ping is called everytime a request is made
+#         current_user.ping()
+#         if not current_user.confirmed \
+#                 and request.endpoint \
+#                 and request.blueprint != 'auth' \
+#                 and request.endpoint != 'static':
+#             return redirect(url_for('auth.unconfirmed'))
 
 # telling user that they still need to confirm account
-@auth.route('/unconfirmed')
-def unconfirmed():
-    """
-    Landing page for the unconfirmed.
+# @auth.route('/unconfirmed')
+# def unconfirmed():
+#     """
+#     Landing page for the unconfirmed.
 
-    Returns: auth/unconfirmed.html
-    """
-    if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index'))
-    # returning unconfirmed template
-    return render_template('auth/unconfirmed.html', user = current_user)
+#     Returns: auth/unconfirmed.html
+#     """
+#     if current_user.is_anonymous or current_user.confirmed:
+#         return redirect(url_for('main.index'))
+#     # returning unconfirmed template
+#     return render_template('auth/unconfirmed.html', user = current_user)
 
-@auth.route('/resend_confirmation')
-def resend_confirmation():
-    """
-    Function that resends confirmation link to the user's email
+# @auth.route('/resend_confirmation')
+# def resend_confirmation():
+#     """
+#     Function that resends confirmation link to the user's email
 
-    Returns: Redirects to the auth/unconfirmed page
-    """
+#     Returns: Redirects to the auth/unconfirmed page
+#     """
 
-    # u is the user before, but now Flask tracks it with current_user
-    user = current_user
+#     # u is the user before, but now Flask tracks it with current_user
+#     user = current_user
 
-    token = user.generate_confirmation_token()
+#     token = user.generate_confirmation_token()
 
-    # url_for helps create dynamic links
-    # _external = True in Flask Mail tells it to generate an absolute link
-    confirmation_link = url_for('auth.confirm', token = token, _external = True)
-    send_email(user.email, "Confirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
-    flash("Check your email for the reconfirmation email.")
-    return redirect(url_for('auth.unconfirmed'))
+#     # url_for helps create dynamic links
+#     # _external = True in Flask Mail tells it to generate an absolute link
+#     confirmation_link = url_for('auth.confirm', token = token, _external = True)
+#     send_email(user.email, "Confirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
+#     flash("Check your email for the reconfirmation email.")
+#     return redirect(url_for('auth.unconfirmed'))
