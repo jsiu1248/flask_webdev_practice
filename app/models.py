@@ -1,6 +1,6 @@
  
 from email.policy import default
-from __init__ import db, login_manager
+from . import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
