@@ -4,6 +4,11 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+# https://stackoverflow.com/questions/58709973/vscode-1-39-x-python-3-7-x-importerror-attempted-relative-import-with-no-kn
+# now the relative imports are seen properly by the debugger. without this, it was erroring out saying it didn't know which package it was from
+PYTHONPATH = "./tests/:./"
+
+
 # base config
 class Config:
     SECRET_KEY = "keep it secret, keep it safe"

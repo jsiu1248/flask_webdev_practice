@@ -1,6 +1,6 @@
  
 from email.policy import default
-from . import db, login_manager
+from __init__ import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
@@ -100,6 +100,11 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     email = db.Column(db.String(64), unique = True, index = True)
     confirmed = db.Column(db.Boolean, default = False)
+    name = db.Column(db.String(64))
+    location = db.Column(db.String(64))
+    bio = db.Column(db.Text())
+    # it will be assigned upon the created of the new User
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
     # we want to assign the users their roles right away
     # user constructor
@@ -115,6 +120,13 @@ class User(UserMixin, db.Model):
             if self.role is None:
                 self.role = Role.query.filter_by(default = True).first()
 
+    def ping(self):
+        """
+        When a new request is made, last_seen is updated.
+        """
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
 
     # errors out when someone tries to read it
     @property

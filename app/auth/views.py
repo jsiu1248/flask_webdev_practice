@@ -82,6 +82,13 @@ def logout():
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
+    """"
+    Confirm the user's email. 
+
+    Args: token(str): Generated after registering email. Token is in confirmation link sent to user's email.
+    Returns: Redirect to index page.
+
+    """
     if current_user.confirmed:
         flash("You're already confirmed, silly!")
         return redirect(url_for('main.index'))
@@ -98,20 +105,32 @@ def confirm(token):
 # view function before any other view function
 @auth.before_app_request
 def before_request():
+    """
+    Returns: unconfirmed page if user is unconfirmed
+    """
     # back slash means line continuation
-    if current_user.is_authenticated \
-        and not current_user.confirmed \
-        and request != 'static' \
-        and request.blueprint != 'auth' \
-        and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+    # they must be signed in and not confirmed and the endpoint is in the auth blueprint
+    if current_user.is_authenticated:
+        # ping is called everytime a request is made
+        current_user.ping()
+        if not current_user.confirmed \
+                and request.endpoint \
+                and request.blueprint != 'auth' \
+                and request.endpoint != 'static':
+            return redirect(url_for('auth.unconfirmed'))
 
-
+# telling user that they still need to confirm account
 @auth.route('/unconfirmed')
 def unconfirmed():
+    """
+    Landing page for the unconfirmed.
+
+    Returns: auth/unconfirmed.html
+    """
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html', user=current_user)
+    # returning unconfirmed template
+    return render_template('auth/unconfirmed.html', user = current_user)
 
 @auth.route('/resend_confirmation')
 def resend_confirmation():
@@ -129,6 +148,6 @@ def resend_confirmation():
     # url_for helps create dynamic links
     # _external = True in Flask Mail tells it to generate an absolute link
     confirmation_link = url_for('auth.confirm', token = token, _external = True)
-    send_email(user.email, "Reconfirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
+    send_email(user.email, "Confirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
     flash("Check your email for the reconfirmation email.")
     return redirect(url_for('auth.unconfirmed'))
