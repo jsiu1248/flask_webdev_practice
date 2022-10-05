@@ -94,6 +94,8 @@ def confirm(token):
         flash("Whoops! That confirmation link either expired, or it isn't valid.")
     return redirect(url_for('main.index'))
 
+# you can restrict a user's access to app for users who are not confirmed
+# view function before any other view function
 @auth.before_app_request
 def before_request():
     # back slash means line continuation
@@ -127,6 +129,6 @@ def resend_confirmation():
     # url_for helps create dynamic links
     # _external = True in Flask Mail tells it to generate an absolute link
     confirmation_link = url_for('auth.confirm', token = token, _external = True)
-    send_email(user.email, "Reconfirmation Email!", 'auth/confirm', user=u, confirmation_link = confirmation_link)
+    send_email(user.email, "Reconfirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
     flash("Check your email for the reconfirmation email.")
     return redirect(url_for('auth.unconfirmed'))
