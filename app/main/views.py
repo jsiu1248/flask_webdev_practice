@@ -4,10 +4,10 @@
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
 from flask import render_template, session, redirect, url_for, flash
-from .forms import NameForm # need a period because trying to import within package
+from .forms import NameForm, EditProfileForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role, Permission
-from flask_login import login_required
+from flask_login import login_required, current_user
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from ..decorators import permission_required, admin_required
@@ -78,3 +78,22 @@ def user(username):
 @login_required
 def top_secret():
     return "Welcome, VIP member!"
+
+@main.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.location = form.location.data
+        current_user.bio = form.bio.data
+        db.session.add(current_user._get_current_object())
+        db.session.commit()
+        flash('You successfully updated your profile! Looks great.')
+        return redirect(url_for('.user', username=current_user.username))
+
+    # why is the data equaled back and forth - seems like it is doing the same thing twice
+    form.name.data = current_user.name
+    form.location.data = current_user.location
+    form.bio.data = current_user.bio
+    return render_template('edit_profile.html', form=form)
