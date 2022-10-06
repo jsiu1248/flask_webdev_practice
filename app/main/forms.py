@@ -29,7 +29,9 @@ class AdminLevelEditProfileForm(FlaskForm):
         )])
 
     confirmed = BooleanField()
-    role = SelectField("Role")
+
+    # field values are coerced into ints instead of str
+    role = SelectField(u"Role", choices=[(1,"User"), (2, "Moderator"), (3, "Administrator")], coerce = int)
     name = StringField("Name", validators=[Length(0, 64)])
     location = StringField("Location", validators=[Length(0,64)])
     bio = TextAreaField("Bio") 
