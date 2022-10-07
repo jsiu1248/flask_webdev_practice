@@ -112,7 +112,6 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # checking if it is ADMIN, and it is then giving it the admin role
-        print(current_app.config['RAGTIME_ADMIN'])
 
         if self.role is None:
             if self.email == current_app.config['RAGTIME_ADMIN']:
@@ -184,6 +183,16 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         # the data isn't committed yet as you want to make sure the user is currently logged in.
         return True
+
+    def unicornify(self, size=128):
+        """
+        Each user is given it's own unique unicorn avatar.
+
+        Returns: Path directly to the image
+        """
+        url = 'https://unicornify.pictures/avatar'
+        hash = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'{url}/{hash}?s={size}'
 
     # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
     # define the same methods as User to prevent any NameErrors where local or global name is not found
