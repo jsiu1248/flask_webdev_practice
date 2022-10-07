@@ -6,6 +6,7 @@ from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime, timedelta
 import jwt
+import hashlib
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
