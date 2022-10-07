@@ -10,6 +10,8 @@ def send_async_email(app, msg):
 
 # using Message to create an email object
 def send_email(to, subject, template, **kwargs):
+    # actual application instead of just the proxy
+    app = current_app._get_current_object()
     msg = Message(
         subject=current_app.config['RAGTIME_MAIL_SUBJECT_PREFIX'] + subject,
         recipients=[to],
