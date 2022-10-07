@@ -4,7 +4,7 @@
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
 from flask import render_template, session, redirect, url_for, flash
-from .forms import NameForm, EditProfileForm # need a period because trying to import within package
+from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role, Permission
 from flask_login import login_required, current_user
@@ -96,4 +96,36 @@ def edit_profile():
     form.name.data = current_user.name
     form.location.data = current_user.location
     form.bio.data = current_user.bio
+    return render_template('edit_profile.html', form=form)
+
+@main.route('/editprofile/<int:id>', methods = ['GET', 'POST'])
+@login_required
+@admin_required
+def admin_edit_profile(id):
+    form = AdminLevelEditProfileForm()
+
+    # Search for user based on ID and return 404 if None
+    user = User.query.filter_by(id = id).first_or_404()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.confirmed = form.confirmed.data
+
+        # filtering for the first role name by form.role.data
+        current_user.role = Role.query.filter_by(id = form.role.data).first()
+        current_user.name = form.name.data
+        current_user.location = form.location.data
+        current_user.bio = form.bio.data
+        db.session.add(current_user._get_current_object())
+        db.session.commit()
+        flash('You successfully updated {user.username}\'s profile.')
+        return redirect(url_for('.user', username=current_user.username))
+
+    # why is the data equaled back and forth - seems like it is doing the same thing twice
+    form.name.data = current_user.name
+    form.location.data = current_user.location
+    form.bio.data = current_user.bio
+    form.username.data = current_user.username
+    form.confirmed.data = current_user.confirmed
+    form.role.data = current_user.role_id
+
     return render_template('edit_profile.html', form=form)

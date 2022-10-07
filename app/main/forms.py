@@ -21,17 +21,19 @@ class EditProfileForm(FlaskForm):
     submit = SubmitField("Submit")
 
 class AdminLevelEditProfileForm(FlaskForm):
-    username =     username = StringField('Username', validators=[
+    # the admin can change the username
+    username = StringField('Username', validators=[
         DataRequired(),
         Length(1, 64),
         Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                    'Usernames must have only letters, numbers, dots, or underscores',
         )])
-
-    confirmed = BooleanField()
+    # the admin can change the confirmation
+    confirmed = BooleanField("Confirmed")
 
     # field values are coerced into ints instead of str
     role = SelectField(u"Role", choices=[(1,"User"), (2, "Moderator"), (3, "Administrator")], coerce = int)
     name = StringField("Name", validators=[Length(0, 64)])
     location = StringField("Location", validators=[Length(0,64)])
     bio = TextAreaField("Bio") 
+    submit = SubmitField("Submit")
