@@ -3,6 +3,7 @@ from xmlrpc.client import Boolean
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, DateField, TextAreaField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Length, Regexp
+from ..models import ReleaseType
 
 class NameForm(FlaskForm):
     # the validator is needed because a string is required
@@ -37,3 +38,16 @@ class AdminLevelEditProfileForm(FlaskForm):
     location = StringField("Location", validators=[Length(0,64)])
     bio = TextAreaField("Bio") 
     submit = SubmitField("Submit")
+
+class CompositionForm(FlaskForm):
+    release_type = SelectField("Release Type", coerce=int, default=ReleaseType.SINGLE, validators=[DataRequired()])
+    title = StringField("Title", validators=[DataRequired()])
+    description = TextAreaField("Tell us about your composition")
+    submit = SubmitField("Submit")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.release_type.choices = [
+            (ReleaseType.SINGLE, 'Single'),
+            (ReleaseType.EXTENDED_PLAY, 'EP'),
+            (ReleaseType.ALBUM, 'Album')]
