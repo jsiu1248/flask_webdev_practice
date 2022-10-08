@@ -4,9 +4,9 @@
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
 from flask import render_template, session, redirect, url_for, flash
-from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm # need a period because trying to import within package
+from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm, CompositionForm # need a period because trying to import within package
 from .. import db
-from ..models import User, Role, Permission
+from ..models import User, Role, Permission, Composition
 from flask_login import login_required, current_user
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
@@ -35,36 +35,29 @@ def for_admins_only():
 def for_moderators_only():
     return "Greetings, moderator!"
 
-@main.route('/', methods=["GET", "POST"])
+@main.route('/', methods=['GET', 'POST'])
 def index():
-    form = NameForm()
+    form = CompositionForm()
+    if current_user.can(Permission.PUBLISH) \
+            and form.validate_on_submit():
+        composition = Composition(
+            release_type=form.release_type.data,
+            title=form.title.data,
+            description=form.description.data,
 
-    if form.validate_on_submit():
-        # name=None # we need a session variable now instead
-        name_entered = form.name.data
-        # query checking if the name is in the database
-        user = User.query.filter_by(username = name_entered).first()
-        if user is None:
-            # setting username to data that has just been entered
-            user = User(username = name_entered)
-            db.session.add(user)
-            db.session.commit()
-            # indicating that a user is new
-            session['known'] = False
-        else:
-            # user does exist in the database?
-            session['known'] = True
-        session['name']= name_entered
-
-        # name=form.name.data # we can clear the line because it already gets cleared
-        form.name.data="" # what does this do?
-        name_entered = form.name.data
-        #whenever a post function happens then you can go back to get function so it doesn't error
-        flash('Please enjoy this place!')
-        return redirect(url_for('index'))
-
-    # session is imported by flask and the get function for key value access     
-    return render_template('index.html', form=form, name=session.get('name'), known = session.get('known', False))
+            # current user is link current_app being a proxy for the current_user and no the actual User
+            # current_user is a shortcut. it already knows what object you want
+            artist=current_user._get_current_object())
+        db.session.add(composition)
+        db.session.commit()
+        return redirect(url_for('.index'))
+    compositions = Composition.query.order_by(
+        Composition.timestamp.desc()).all()
+    return render_template(
+        'index.html',
+        form=form,
+        compositions=compositions
+    )
 
 # route will pass user_name variable
 @main.route('/user/<username>')
