@@ -111,13 +111,16 @@ class User(UserMixin, db.Model):
     # user constructor
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # checking if it is ADMIN, and it is then giving it the admin role
-
+        
+        # the first time a user logs in, we will set their role
+        # the next time, they log in they will skip this 
         if self.role is None:
-            if self.email == current_app.config['RAGTIME_ADMIN']:
+            # checking if it is ADMIN, and it is then giving it the admin role
+            print(self.email)
+            if self.email == "flaskwebdev.js@gmail.com": #current_app.config['RAGTIME_ADMIN']:
                 self.role = Role.query.filter_by(name = 'Administrator').first()
             # if not an admin then it gets a normal user role
-            if self.role is None:
+            elif self.role is None:
                 self.role = Role.query.filter_by(default = True).first()
 
     def ping(self):

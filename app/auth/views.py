@@ -80,6 +80,14 @@ def logout():
     flash("You've been logged out successfully")
     return redirect(url_for('main.index'))
 
+@auth.route('/change_password')
+def change_password():
+    pass
+
+@auth.route('/change_email_request')
+def change_email_request():
+    pass
+
 # take a token and attempt to confirm the user and then redirect it back to the index page
 # we want this to confirm the current_user because we don't want an old user
 @auth.route('/confirm/<token>')
