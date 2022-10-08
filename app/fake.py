@@ -50,3 +50,5 @@ def compositions(count=100):
                         artist=u)
         db.session.add(c)
     db.session.commit()
+
+    # you can use the shell to create more fake users in the dev environment
