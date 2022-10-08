@@ -106,6 +106,7 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.Text())
     # it will be assigned upon the created of the new User
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    avatar_hash = db.Column(db.String(32))
 
     # we want to assign the users their roles right away
     # user constructor
@@ -120,8 +121,16 @@ class User(UserMixin, db.Model):
             if self.email == "flaskwebdev.js@gmail.com": #current_app.config['RAGTIME_ADMIN']:
                 self.role = Role.query.filter_by(name = 'Administrator').first()
             # if not an admin then it gets a normal user role
-            elif self.role is None:
+            if self.role is None:
                 self.role = Role.query.filter_by(default = True).first()
+            
+            # if email is not black then call the hash function
+            if self.email is not None and self.avatar_hash is None:
+                self.avatar_hash = self.email_hash()
+    
+    # creating a hash for the email
+    def email_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
 
     def ping(self):
         """
@@ -189,7 +198,7 @@ class User(UserMixin, db.Model):
 
     def unicornify(self, size=128):
         """
-        Each user is given it's own unique unicorn avatar.
+        Each user is given it's own unique unicorn avatar. Uses the cached hash if avaliable and if not it creates one.
 
         Returns: Path directly to the image
         """
