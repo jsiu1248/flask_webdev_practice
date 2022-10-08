@@ -21,5 +21,16 @@
 {{wtf.quick_form(form)}}
 
 {{ compositions|length }}
+
+<ul class="compositions"> {# All compositions #}
+    <li class="composition"> {# Single composition #}
+        <div class="composition-thumbnail"> {# Avatar #} </div>
+        <div class="composition-content"> {# Composition content #}
+            <div class="composition-date">{# moment(composition.timestamp).fromNow() #}</div>
+            <div class="composition-artist">{# title #}</div>
+            {# ... #}
+        </div>
+    </li>
+</ul>
 {% endblock %}
 
