@@ -107,6 +107,7 @@ class User(UserMixin, db.Model):
     # it will be assigned upon the created of the new User
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+    compositions = db.relationship('Composition', backref='artist', lazy='dynamic')
 
     # we want to assign the users their roles right away
     # user constructor
@@ -206,25 +207,40 @@ class User(UserMixin, db.Model):
         hash = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'{url}/{hash}?s={size}'
 
-    # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
-    # define the same methods as User to prevent any NameErrors where local or global name is not found
-    class AnonymousUser(AnonymousUserMixin):
-        # checking that a user has a given permission and can perform a task
-        def can(self, perm):
-            return False
-        def is_administrator(self):
-            return False
+# in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
+# define the same methods as User to prevent any NameErrors where local or global name is not found
+class AnonymousUser(AnonymousUserMixin):
+    # checking that a user has a given permission and can perform a task
+    def can(self, perm):
+        return False
+    def is_administrator(self):
+        return False
+
+class ReleaseType:
+    SINGLE = 1
+    EXTENDED_PLAY = 2
+    ALBUM = 3
+
+
+class Composition(db.Model):
+    __tablename__ = 'compositions'
+    id = db.Column(db.Integer, primary_key=True)
+    release_type = db.Column(db.Integer)
+    title = db.Column(db.String(64))
+    description = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    artist_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
     # have to let login_manager know about the new class through the anonymous_user attribute
     # why does this need to be done again? Since in the definition is already named AnonymousUser
-    login_manager.anonymous_user = AnonymousUser
+login_manager.anonymous_user = AnonymousUser
 
-    # login manager needs help with getting users
-    # LoginManager will call load_user() to find out info about users
-    # takes an id and returns the user
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
+# login manager needs help with getting users
+# LoginManager will call load_user() to find out info about users
+# takes an id and returns the user
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-    def __repr__(self):
-        return f"<User {self.username}>"
+def __repr__(self):
+    return f"<User {self.username}>"
