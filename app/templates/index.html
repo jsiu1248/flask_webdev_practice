@@ -2,6 +2,8 @@
 
 
 {%import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
 
 {% block title %} {{super()}} Home {% endblock title%}
 
@@ -35,5 +37,12 @@
     </li>
 </ul>
 {% endfor %}
+
+
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.index') }}
+</div>
+{% endif %}
 {% endblock %}
 

@@ -52,12 +52,16 @@ def index():
         db.session.add(composition)
         db.session.commit()
         return redirect(url_for('.index'))
+    
+    # determining the page to render and the default page is 1
     page = request.args.get('page', 1, type=int)
+    # all is replaced by paginate
     pagination = \
         Composition.query.order_by(Composition.timestamp.desc()).paginate(
             page,
             per_page=current_app.config['RAGTIME_COMPS_PER_PAGE'],
             error_out=False)
+    # the items are the results of the particular page        
     compositions = pagination.items
     return render_template(
         'index.html',

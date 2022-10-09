@@ -1,7 +1,10 @@
+
+{# Args: pagination object and endpoint #}
 {% macro pagination_widget(pagination, endpoint) %}
 <ul class="pagination">
     {# previous page link #}
     <li {% if not pagination.has_prev %} class="disabled"{% endif %}>
+    {# The endpoint is index#}
         <a href="{% if pagination.has_prev %}{{ url_for(endpoint,
             page = 1, **kwargs) }}{% else %}#{% endif %}">
             &laquo;
@@ -10,6 +13,7 @@
     {# link to all shown pages #}
     {% for p in pagination.iter_pages(1, 5, 5, 1) %}
         {% if p %}
+        {# active class is given to the current page to make it pop out#}
             <li {% if p == pagination.page %} class="active"{% endif %}>
                 <a href="{{ url_for(endpoint, page=p, **kwargs) }}">{{ p }}</a>
             </li>
