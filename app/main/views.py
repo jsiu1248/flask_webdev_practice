@@ -3,7 +3,7 @@
 # have to do it in a way that it records the actions
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
-from flask import render_template, session, redirect, url_for, flash
+from flask import render_template, session, redirect, url_for, flash, current_app, request
 from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm, CompositionForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role, Permission, Composition
@@ -52,12 +52,18 @@ def index():
         db.session.add(composition)
         db.session.commit()
         return redirect(url_for('.index'))
-    compositions = Composition.query.order_by(
-        Composition.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = \
+        Composition.query.order_by(Composition.timestamp.desc()).paginate(
+            page,
+            per_page=current_app.config['RAGTIME_COMPS_PER_PAGE'],
+            error_out=False)
+    compositions = pagination.items
     return render_template(
         'index.html',
         form=form,
-        compositions=compositions
+        compositions=compositions,
+        pagination=pagination
     )
 
 # route will pass user_name variable
