@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import jwt
 import hashlib
 import bleach
+import re
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
@@ -232,14 +233,32 @@ class Composition(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     artist_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     description_html = db.Column(db.Text)
+    slug = db.Column(db.String(128), unique=True)
 
     @staticmethod
     def on_changed_description(target, value, oldvalue, initiator):
+        """
+        "listener" of SQLAlchemy's "set" event for description. the function will be called whenever the
+        description changes.
+        """
         allowed_tags = ['a']
+        # clean is called, takes a list of allowed tags
+        # linkify will make hyperlinks out of urls in text. <a> tags are created automatically 
         html = bleach.linkify(bleach.clean(value,
+        # allowed tags is a whitelist
                                            tags=allowed_tags,
+        # strip away any extra characters
                                            strip=True))
         target.description_html = html
+
+    def generate_slug(self):
+        """
+        The slug is long enough for any title. REGEX is used to make it more readable and lowered.
+        The id is added to make sure that it is unique. 
+        """
+        self.slug = f"{self.id}-" + re.sub(r'[^\w]+', '-', self.title.lower())
+        db.session.add(self)
+        db.session.commit()
 
 
 db.event.listen(Composition.description,

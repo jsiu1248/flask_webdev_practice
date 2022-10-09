@@ -11,3 +11,12 @@
     </li>
 </ul>
 {% endfor %}
+
+<div class="composition-description">
+    {% if composition.description_html %}
+    {# telling Jinja it is safe and don't escape the HTML elements#}
+    {{ composition.description_html | safe }}
+    {% else %}
+    {{ composition.description }}
+    {% endif %}
+</div>
