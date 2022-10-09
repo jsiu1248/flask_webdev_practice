@@ -7,6 +7,7 @@ from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime, timedelta
 import jwt
 import hashlib
+import bleach
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
@@ -230,6 +231,20 @@ class Composition(db.Model):
     description = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     artist_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    description_html = db.Column(db.Text)
+
+    @staticmethod
+    def on_changed_description(target, value, oldvalue, initiator):
+        allowed_tags = ['a']
+        html = bleach.linkify(bleach.clean(value,
+                                           tags=allowed_tags,
+                                           strip=True))
+        target.description_html = html
+
+
+db.event.listen(Composition.description,
+                'set',
+                Composition.on_changed_description)
     
     # have to let login_manager know about the new class through the anonymous_user attribute
     # why does this need to be done again? Since in the definition is already named AnonymousUser

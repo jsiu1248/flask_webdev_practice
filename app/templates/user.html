@@ -59,6 +59,15 @@
     Edit as Admin
 </a>
 {% endif %}
+
+<div>
+<h3>Compositions by {{ user.username }}</h3>
+{% include '_compositions.html' %}
+{% if pagination %}
+    {{ macros.pagination_widget(pagination, '.user', username = user.username) }}
+{% endif %}
+</div>
+
 {% endblock %}
 
 
