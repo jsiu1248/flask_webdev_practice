@@ -1,0 +1,13 @@
+<ul class="compositions"> {% for composition in compositions%}
+    <li class="composition"> {# Single composition #}
+        <div class="composition-thumbnail"> <img class="img-rounded profile-thumbnail"
+                    src="{{ composition.artist.unicornify(size=64) }}"> </div>
+        <div class="composition-content"> {{ composition.description }}
+            <div class="composition-date">{{ moment(composition.timestamp).fromNow() }}</div>
+            <div class="composition-artist">{{ composition.title }}</div>
+            <div class="composition-release_type">{{composition.release_type}}
+            {# ... #}
+        </div>
+    </li>
+</ul>
+{% endfor %}
