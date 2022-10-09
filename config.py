@@ -21,7 +21,7 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-
+    RAGTIME_COMPS_PER_PAGE = 25
     # Other email settings
     # email for the administrator of the flask app
     RAGTIME_ADMIN = os.environ.get('RAGTIME_ADMIN')
