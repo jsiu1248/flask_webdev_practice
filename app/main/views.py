@@ -47,7 +47,8 @@ def index():
 
             # current user is link current_app being a proxy for the current_user and no the actual User
             # current_user is a shortcut. it already knows what object you want
-            artist=current_user._get_current_object())
+            artist=current_user._get_current_object()
+            )
         db.session.add(composition)
         db.session.commit()
         return redirect(url_for('.index'))
