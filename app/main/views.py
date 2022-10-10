@@ -138,5 +138,6 @@ def admin_edit_profile(id):
 
 @main.route('/composition/<slug>')
 def composition(slug):
+    # passes composition contained in a list respresented as compositions to template
     composition = Composition.query.filter_by(slug=slug).first_or_404()
     return render_template('composition.html', compositions=[composition])

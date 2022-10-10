@@ -1,22 +1,35 @@
-<ul class="compositions"> {% for composition in compositions%}
-    <li class="composition"> {# Single composition #}
+<ul class="compositions"> 
+
+{% for composition in compositions%}
+    <li class="composition"> 
+    {# Single composition #}
         <div class="composition-thumbnail"> <img class="img-rounded profile-thumbnail"
                     src="{{ composition.artist.unicornify(size=64) }}"> </div>
-        <div class="composition-content"> {{ composition.description }}
             <div class="composition-date">{{ moment(composition.timestamp).fromNow() }}</div>
-            <div class="composition-artist">{{ composition.title }}</div>
-            <div class="composition-release_type">{{composition.release_type}}
+        <div class="composition-title">
+            <a href="{{ url_for('.composition', slug=composition.slug) }}">
+                {{ composition.title }}
+            </a>
+        </div>            
+        <div class="composition-release_type">{{composition.release_type}}
             {# ... #}
-        </div>
-    </li>
-</ul>
-{% endfor %}
-
-<div class="composition-description">
+            <div class="composition-description">
     {% if composition.description_html %}
     {# telling Jinja it is safe and don't escape the HTML elements#}
+    
     {{ composition.description_html | safe }}
     {% else %}
     {{ composition.description }}
     {% endif %}
 </div>
+        </div>
+    </li>
+</ul>
+
+
+
+
+
+
+{% endfor %}
+

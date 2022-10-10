@@ -27,8 +27,6 @@ def users(count=20):
         try:
             db.session.commit()
             i += 1
-            for c in Composition.query.all():
-                c.generate_slug()
         except IntegrityError:
             db.session.rollback()
 
@@ -52,5 +50,8 @@ def compositions(count=100):
                         artist=u)
         db.session.add(c)
     db.session.commit()
+    for c in Composition.query.all():
+        c.generate_slug()
+
 
     # you can use the shell to create more fake users in the dev environment
