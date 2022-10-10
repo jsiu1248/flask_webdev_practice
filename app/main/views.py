@@ -51,6 +51,8 @@ def index():
             )
         db.session.add(composition)
         db.session.commit()
+        # must be generated after first commit because it depends on composition's id
+        composition.generate_slug()
         return redirect(url_for('.index'))
     
     # determining the page to render and the default page is 1
@@ -133,3 +135,8 @@ def admin_edit_profile(id):
     form.role.data = current_user.role_id
 
     return render_template('edit_profile.html', form=form)
+
+@main.route('/composition/<slug>')
+def composition(slug):
+    composition = Composition.query.filter_by(slug=slug).first_or_404()
+    return render_template('composition.html', compositions=[composition])
