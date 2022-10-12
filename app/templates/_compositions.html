@@ -10,7 +10,12 @@
             <a href="{{ url_for('.composition', slug=composition.slug) }}">
                 {{ composition.title }}
             </a>
-        </div>            
+        </div> 
+                 <div class="composition-artist">
+                <a href="{{ url_for('main.user', username=composition.artist.username) }}">
+                    {{ composition.artist.username }}
+                </a>
+            </div>           
         <div class="composition-release_type">{{composition.release_type}}
             {# ... #}
             <div class="composition-description">
@@ -23,13 +28,12 @@
     {% endif %}
 </div>
         </div>
+
     </li>
 </ul>
 
 
 
-
-
-
 {% endfor %}
 
+{# have to add the code back for adding admin buttom and edit button#}

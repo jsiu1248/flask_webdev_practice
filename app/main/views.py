@@ -3,7 +3,7 @@
 # have to do it in a way that it records the actions
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
-from flask import render_template, session, redirect, url_for, flash, current_app, request
+from flask import render_template, session, redirect, url_for, flash, current_app, request, abort
 from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm, CompositionForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role, Permission, Composition
@@ -108,6 +108,10 @@ def edit_profile():
 @login_required
 @admin_required
 def admin_edit_profile(id):
+    """
+    Admin access to editting other's profiles. Admin access and login is required. 
+    Args: id of user
+    """
     form = AdminLevelEditProfileForm()
 
     # Search for user based on ID and return 404 if None
@@ -136,8 +140,43 @@ def admin_edit_profile(id):
 
     return render_template('edit_profile.html', form=form)
 
+
 @main.route('/composition/<slug>')
+@login_required
 def composition(slug):
     # passes composition contained in a list respresented as compositions to template
     composition = Composition.query.filter_by(slug=slug).first_or_404()
     return render_template('composition.html', compositions=[composition])
+
+@main.route('/edit/<slug>')
+@login_required
+def edit_composition(slug):
+    """
+    Edit each composition. Login is required. 
+    Args: slug
+    """
+    form = CompositionForm()
+    # searches for composition by slug or 404
+    composition = Composition.query.filter_by(slug=slug).first_or_404()
+    # if not the user nor admin abort
+    if current_user.username != composition.artist and not current_user.can(Permission.ADMIN):
+        abort(403)  
+    if form.validate_on_submit():
+        composition.release_type = form.release_type.data
+        composition.title = form.title.data
+        composition.description = form.description.data
+        composition.generate_slug()
+        db.session.add(composition)
+        db.session.commit()
+        flash("Composition updated")
+
+        # which slug is it directing to?
+        return redirect(url_for('.composition', slug = composition.slug))
+    # why is the data equaled back and forth - seems like it is doing the same thing twice
+    form.release_type.data = composition.release_type
+    form.title.data = composition.title
+    form.description.data = composition.description
+    return render_template('edit_composition.html', form=form)
+
+
+
