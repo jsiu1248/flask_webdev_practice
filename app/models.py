@@ -142,6 +142,7 @@ class User(UserMixin, db.Model):
     # user constructor
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        assert self.email is not None
         
         # the first time a user logs in, we will set their role
         # the next time, they log in they will skip this 
