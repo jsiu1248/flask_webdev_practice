@@ -3,8 +3,9 @@
 {% block title %}{{super()}} User {{user_name}}{% endblock title %}
 
 {% block navbar %}
-    {{ super() }}
+{{ super() }}
 {% endblock navbar %}
+
 
 {% block page_content %}
 {{ super() }}
@@ -12,34 +13,35 @@
     <h1>{{ user.username }}</h1>
     <table class="table">
         <tbody>
-        <tr>
-        <th scope="row">Name</th>
-        <td>{% if user.name %}{{ user.name }}{% endif %}</td>
-        </tr>
-        <tr>
-        <th scope="row">Location</th>
-        <td>{% if user.location %}{{ user.location }}{% endif %}</td>
-        </tr>
-        {% if current_user.is_administrator() %}
             <tr>
-            <th scope="row">Email</th>
-            <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                <th scope="row">Name</th>
+                <td>{% if user.name %}{{ user.name }}{% endif %}</td>
             </tr>
-        {% endif %}
-        <tr>
-        <th scope="row">Bio</th>
-        <td>{% if user.bio %}{{ user.bio }}{% endif %}</td>
-        </tr>
-        <tr>
-        <th scope="row">Last seen</th>
-        <td>{{ moment(user.last_seen).fromNow() }}</td>
-        </tr>
+            <tr>
+                <th scope="row">Location</th>
+                <td>{% if user.location %}{{ user.location }}{% endif %}</td>
+            </tr>
+            {% if current_user.is_administrator() %}
+            <tr>
+                <th scope="row">Email</th>
+                <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th scope="row">Bio</th>
+                <td>{% if user.bio %}{{ user.bio }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th scope="row">Last seen</th>
+                <td>{{ moment(user.last_seen).fromNow() }}</td>
+
+            </tr>
         </tbody>
     </table>
 </div>
 
-{# using the two classes from the css file 
-    and img-rounded makes image with rounded corners#}
+{# using the two classes from the css file
+and img-rounded makes image with rounded corners#}
 <div class="page-header">
     <img class="img-rounded profile-thumbnail" src="{{ user.unicornify() }}">
     <div class="profile-header">
@@ -62,13 +64,11 @@
 {% endif %}
 
 <div>
-<h3>Compositions by {{ user.username }}</h3>
-{% include '_compositions.html' %}
-{% if pagination %}
+    <h3>Compositions by {{ user.username }}</h3>
+    {% include '_compositions.html' %}
+    {% if pagination %}
     {{ macros.pagination_widget(pagination, '.user', username = user.username) }}
-{% endif %}
+    {% endif %}
 </div>
 
 {% endblock %}
-
-

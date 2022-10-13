@@ -75,8 +75,17 @@ def index():
 # route will pass user_name variable
 @main.route('/user/<username>')
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template("user.html", user=user)
+    # query user or return error
+    user = User.query.filter_by(username = username).first_or_404()
+    page = request.args.get('page', 1, type = int)
+    # Pagination of the compositions for user
+    pagination = Composition.query.filter_by(artist=user).order_by(Composition.timestamp.desc()).paginate(
+            page,
+            per_page=current_app.config['RAGTIME_COMPS_PER_PAGE'],
+            error_out=False)
+    # Convert to list
+    compositions = pagination.items
+    return render_template('user.html', user=user, compositions=compositions, pagination=pagination)
 
 
 # route will require login
