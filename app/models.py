@@ -263,8 +263,8 @@ class User(UserMixin, db.Model):
             following_id=user.id).first() is not None
 
     def is_a_follower(self, user):
-        """ determines if 
-        
+        """ determines if another user is a follower
+        Args: user is or is not a follower
         """
         if user.id is None:
             return False

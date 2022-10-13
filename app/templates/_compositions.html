@@ -1,33 +1,33 @@
-<ul class="compositions"> 
+<ul class="compositions">
 
-{% for composition in compositions%}
-    <li class="composition"> 
-    {# Single composition #}
+    {% for composition in compositions%}
+    <li class="composition">
+        {# Single composition #}
         <div class="composition-thumbnail"> <img class="img-rounded profile-thumbnail"
-                    src="{{ composition.artist.unicornify(size=64) }}"> </div>
-            <div class="composition-date">{{ moment(composition.timestamp).fromNow() }}</div>
+                src="{{ composition.artist.unicornify(size=64) }}"> </div>
+        <div class="composition-date">{{ moment(composition.timestamp).fromNow() }}</div>
         <div class="composition-title">
             <a href="{{ url_for('.composition', slug=composition.slug) }}">
                 {{ composition.title }}
             </a>
-        </div> 
-                 <div class="composition-artist">
-                <a href="{{ url_for('main.user', username=composition.artist.username) }}">
-                    {{ composition.artist.username }}
-                </a>
-            </div>           
-        <div class="composition-release_type">{{composition.release_type}}
+        </div>
+        <div class="composition-artist">
+            <a href="{{ url_for('main.user', username=composition.artist.username) }}">
+                {{ composition.artist.username }}
+            </a>
+        </div>
+        <div class="composition-release_type">{{composition.release_type}} </div>
             {# ... #}
             <div class="composition-description">
-    {% if composition.description_html %}
-    {# telling Jinja it is safe and don't escape the HTML elements#}
-    
-    {{ composition.description_html | safe }}
-    {% else %}
-    {{ composition.description }}
-    {% endif %}
-</div>
-        </div>
+                {% if composition.description_html %}
+                {# telling Jinja it is safe and don't escape the HTML elements#}
+
+                {{ composition.description_html | safe }}
+                {% else %}
+                {{ composition.description }}
+                {% endif %}
+            
+            </div>
 
     </li>
 </ul>

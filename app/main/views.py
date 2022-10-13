@@ -172,11 +172,61 @@ def edit_composition(slug):
 
         # which slug is it directing to?
         return redirect(url_for('.composition', slug = composition.slug))
+        
     # why is the data equaled back and forth - seems like it is doing the same thing twice
     form.release_type.data = composition.release_type
     form.title.data = composition.title
     form.description.data = composition.description
     return render_template('edit_composition.html', form=form)
 
+@main.route('/follow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def follow(username):
+    """ follow a destinated user and making sure the user exists and if they are already following them.
+    Args: user who you want to follow
+    """
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash("That is not a valid user.")
+        return redirect(url_for('.index'))
+    if current_user.is_following(user):
+        flash("Looks like you are already following that user.")
+        return redirect(url_for('.user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash(f"You are now following {username}")
+    return redirect(url_for('.user', username=username))
+
+@main.route('/followers/<username>')
+def followers(username):
+    """ Get and paginate users. Get the user in question and if they don't exist then go 
+    through a notification. A pagination object is created from the user's followers. Query for followers returns a list of
+    follow instances. Only the follower users are needed. Another list is created that gives only
+    the follower users and the timestamp
+        Args: 
+    """
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash("That is not a valid user.")
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    pagination = user.followers.paginate(
+        page,
+        per_page=current_app.config['RAGTIME_FOLLOWERS_PER_PAGE'],
+        error_out=False)
+    # convert to only follower and timestamp
+    follows = [{'user': item.follower, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('followers.html',
+                           user=user,
+                           title_text="Followers of",
+                           endpoint='.followers',
+                           pagination=pagination,
+                           follows=follows)
 
 
+"""view function for unfollow"""
+
+
+"""view fruction for following """
