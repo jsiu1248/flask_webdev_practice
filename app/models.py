@@ -93,7 +93,24 @@ class Role(db.Model):
     # if the permission is greater than 0 then it has a particular permission
     def has_permission(self, perm):
         return self.permissions & perm == perm
+
+class Follow(db.Model):
+    __tablename__ = 'follows'
+
+    # ID of the user who follows another
+    follower_id = db.Column(db.Integer,
+                            db.ForeignKey('users.id'),
+    # with both columns as primary key then both foreign keys form the primary key
+                            primary_key=True)
     
+    # ID of the user who is being followed
+    following_id = db.Column(db.Integer,
+                             db.ForeignKey('users.id'),
+                             primary_key=True)
+    # time the user started following
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class User(UserMixin, db.Model):
     __tablename__='users'
     id = db.Column(db.Integer, primary_key = True)
@@ -110,6 +127,16 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     compositions = db.relationship('Composition', backref='artist', lazy='dynamic')
+    following = db.relationship('Follow',
+                               foreign_keys=[Follow.follower_id],
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic',
+                               cascade='all, delete-orphan')
+    followers = db.relationship('Follow',
+                                foreign_keys=[Follow.following_id],
+                                backref=db.backref('following', lazy='joined'),
+                                lazy='dynamic',
+                                cascade='all, delete-orphan')
 
     # we want to assign the users their roles right away
     # user constructor
@@ -208,6 +235,41 @@ class User(UserMixin, db.Model):
         url = 'https://unicornify.pictures/avatar'
         hash = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'{url}/{hash}?s={size}'
+
+    def follow(self, user):
+        """
+        follows user. A new row is inserted in the follows table linking it to the user passed in
+        Args: user that you want to follow
+        """
+        if not self.is_following(user):
+            f = Follow(follower=self, following=user)
+            db.session.add(f)
+
+    def unfollow(self, user):
+        """unfollows user. A row is deleted in the follows table linking the user  passed in 
+        Args: user that you want to unfollow
+        """
+        f = self.following.filter_by(following_id=user.id).first()
+        if f:
+            db.session.delete(f)
+
+    def is_following(self, user):
+        """ determines if you are following user
+        Args: user that you want to see if you are following
+        """
+        if user.id is None:
+            return False
+        return self.following.filter_by(
+            following_id=user.id).first() is not None
+
+    def is_a_follower(self, user):
+        """ determines if 
+        
+        """
+        if user.id is None:
+            return False
+        return self.followers.filter_by(
+            follower_id=user.id).first() is not None
 
 # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
 # define the same methods as User to prevent any NameErrors where local or global name is not found
