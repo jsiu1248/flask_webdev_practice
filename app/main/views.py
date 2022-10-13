@@ -198,13 +198,43 @@ def follow(username):
     flash(f"You are now following {username}")
     return redirect(url_for('.user', username=username))
 
+
+@main.route('/unfollow/<username>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def unfollow(username):
+    """ unfollow a user. Checks if following already
+    Args: user who you want to unfollow
+    Returns: user.html takes you back to user profile"""
+    user = User.query.filter_by(username=username).first()
+    # if not a user
+    if user is None:
+        flash("That is not a valid user.")
+        return redirect(url_for('.index'))
+    # if not already following that user
+    if not current_user.is_a_follower(user):
+        flash("You are not following that user.")
+        return redirect(url_for('.user', username=username))
+    # unfollow user and take row out from database
+    current_user.unfollow(user)
+    db.session.commit()
+    flash(f"You have unfollowed {username}")
+    # redirects to user profile
+    return redirect(url_for('.user', username=username))
+
+
+
+
+
+
 @main.route('/followers/<username>')
 def followers(username):
     """ Get and paginate users. Get the user in question and if they don't exist then go 
     through a notification. A pagination object is created from the user's followers. Query for followers returns a list of
     follow instances. Only the follower users are needed. Another list is created that gives only
     the follower users and the timestamp
-        Args: 
+        Args: username (str): name of the user who has followers
+        Returns: followers.html returns a page displaying the followers of the user
     """
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -226,7 +256,33 @@ def followers(username):
                            follows=follows)
 
 
-"""view function for unfollow"""
 
 
-"""view fruction for following """
+
+@main.route('/following/<username>')
+def following(username):
+    """
+    Show users a particular user is already following
+    Args: username(str) : showing who this user follows
+    Return: following.html returns page displaying user following who
+    """
+    user = User.query.filter_by(username=username).first()
+    # if not a user
+    if user is None:
+        flash("That is not a valid user.")
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    # display page with list of users who user is following
+    pagination = user.following.paginate(
+        page,
+        per_page=current_app.config['RAGTIME_FOLLOWERS_PER_PAGE'],
+        error_out=False)
+    # convert to only follower and timestamp
+    follows = [{'user': item.following, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('following.html',
+                           user=user,
+                           title_text="Following",
+                           endpoint='.following',
+                           pagination=pagination,
+                           follows=follows)

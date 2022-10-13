@@ -16,7 +16,7 @@
                 {{ composition.artist.username }}
             </a>
         </div>
-        <div class="composition-release_type">{{composition.release_type}} </div>
+        <div class="composition-release_type">{{composition.release_type}}
             {# ... #}
             <div class="composition-description">
                 {% if composition.description_html %}
@@ -26,14 +26,13 @@
                 {% else %}
                 {{ composition.description }}
                 {% endif %}
-            
             </div>
+        </div>
 
     </li>
+    {% endfor %}
 </ul>
 
 
-
-{% endfor %}
 
 {# have to add the code back for adding admin buttom and edit button#}
