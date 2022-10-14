@@ -1,7 +1,7 @@
 from flask import render_template, session, redirect, url_for, flash, current_app, request
 
 from app.email import send_email
-from .forms import LoginForm, RegistrationForm # need a period because trying to import within package
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role
 from flask_login import login_required, logout_user, login_user, current_user
@@ -83,9 +83,24 @@ def logout():
 @auth.route('/change_password')
 def change_password():
     """ Allows users to change password
-    Returns: renders change password form
+    Returns: renders change password form and change-password.
     """
-    form = ChangePassword()
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        new_password = form.new_password.data
+        # Checks if old password matches then we can use the new password
+        if current_user.verify_password(password) == True:
+            current_user.password = new_password
+            # add it to the current user and commit
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Password has been changed.')
+            # the password change was a success, so user is directed to login
+            return redirect(url_for('auth.login'))
+        else:
+            flash('Old password does not match. Try again.')
+    return render_template('auth/change_password.html', form = form)
 
 @auth.route('/change_email_request')
 def change_email_request():

@@ -40,7 +40,7 @@ class RegistrationForm(FlaskForm):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Sorry! Username already in use.')
 
-class ChangePassword(FlaskForm):
+class ChangePasswordForm(FlaskForm):
     """Form for changing password
     """
     old_password = PasswordField("Old Password", validators=[DataRequired()])
