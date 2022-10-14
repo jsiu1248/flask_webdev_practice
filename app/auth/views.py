@@ -82,7 +82,10 @@ def logout():
 
 @auth.route('/change_password')
 def change_password():
-    pass
+    """ Allows users to change password
+    Returns: renders change password form
+    """
+    form = ChangePassword()
 
 @auth.route('/change_email_request')
 def change_email_request():
