@@ -271,6 +271,12 @@ class User(UserMixin, db.Model):
             return False
         return self.followers.filter_by(
             follower_id=user.id).first() is not None
+            
+    @property
+    def followed_compositions(self):
+        return Composition.query.join(
+            Follow, Follow.following_id == Composition.artist_id)\
+            .filter(Follow.follower_id == self.id)
 
 # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
 # define the same methods as User to prevent any NameErrors where local or global name is not found
