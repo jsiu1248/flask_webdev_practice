@@ -271,9 +271,11 @@ class User(UserMixin, db.Model):
             return False
         return self.followers.filter_by(
             follower_id=user.id).first() is not None
-            
+
     @property
     def followed_compositions(self):
+        """Joining Composition and Follow tables and the primary key on following_id and arist_id. And, we are filtering the ones that match so it feels
+        as an inner join"""
         return Composition.query.join(
             Follow, Follow.following_id == Composition.artist_id)\
             .filter(Follow.follower_id == self.id)
