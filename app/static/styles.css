@@ -32,6 +32,7 @@ div.composition-artist {
 }
 div.composition-release-type {
     font-style: italic;
+    float: right;
 }
 div.composition-title {
     font-weight: bold;
