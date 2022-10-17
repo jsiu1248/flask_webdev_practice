@@ -3,7 +3,7 @@
 # have to do it in a way that it records the actions
 # may have some kind of cache and finds main as a key and then value of that is a blueprint
 from . import main # from this package import main object
-from flask import render_template, session, redirect, url_for, flash, current_app, request, abort
+from flask import render_template, session, redirect, url_for, flash, current_app, request, abort, make_response
 from .forms import NameForm, EditProfileForm, AdminLevelEditProfileForm, CompositionForm # need a period because trying to import within package
 from .. import db
 from ..models import User, Role, Permission, Composition
@@ -65,10 +65,27 @@ def index():
             error_out=False)
     # the items are the results of the particular page        
     compositions = pagination.items
+    show_followed = False
+    if current_user.is_authenticated:
+        # user's choice is stored in a cookie called show_followed
+        show_followed = bool(request.cookies.get('show_followed', ''))
+    if show_followed:
+        # query variable is set to either followed or all composition
+        #and only followed compositions are shown with your newly created property User.followed_compositions
+
+        query = current_user.followed_compositions
+    else:
+        query = Composition.query
+    pagination = query.order_by(Composition.timestamp.desc()).paginate(
+        page,
+        per_page=current_app.config['RAGTIME_COMPS_PER_PAGE'],
+        error_out=False)
+    compositions = pagination.items
     return render_template(
         'index.html',
         form=form,
         compositions=compositions,
+        show_followed=show_followed,
         pagination=pagination
     )
 
@@ -85,6 +102,7 @@ def user(username):
             error_out=False)
     # Convert to list
     compositions = pagination.items
+    
     return render_template('user.html', user=user, compositions=compositions, pagination=pagination)
 
 
@@ -295,3 +313,21 @@ def following(username):
                            endpoint='.following',
                            pagination=pagination,
                            follows=follows)
+
+@main.route('/all')
+@login_required
+def show_all():
+    #  automatically makes response objects out of whatever you pass in the return statement,
+    # make_response() function takes the name of the cookie first, then the value it will take on
+    resp = make_response(redirect(url_for('.index')))
+    # max_age argument sets the number of seconds until the cookie expires
+    resp.set_cookie('show_followed', '', max_age=30*24*60*60) # 30 days
+    return resp
+
+
+@main.route('/followed')
+@login_required
+def show_followed():
+    resp = make_response(redirect(url_for('.index')))
+    resp.set_cookie('show_followed', '1', max_age=30*24*60*60) # 30 days
+    return resp
