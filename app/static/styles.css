@@ -49,3 +49,7 @@ div.composition-title {
     margin-left: 72px;
     min-height: 72px;
 } 
+
+div.composition-tabs {
+    margin-top: 16px;
+}

@@ -280,6 +280,14 @@ class User(UserMixin, db.Model):
             Follow, Follow.following_id == Composition.artist_id)\
             .filter(Follow.follower_id == self.id)
 
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
+
 # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
 # define the same methods as User to prevent any NameErrors where local or global name is not found
 class AnonymousUser(AnonymousUserMixin):
