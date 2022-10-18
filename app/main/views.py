@@ -168,25 +168,26 @@ def admin_edit_profile(id):
     return render_template('edit_profile.html', form=form)
 
 
-@main.route('/composition/<slug>')
+@main.route('/composition/<slug>',  methods=["GET", "POST"])
 @login_required
 def composition(slug):
     # passes composition contained in a list respresented as compositions to template
     composition = Composition.query.filter_by(slug=slug).first_or_404()
     return render_template('composition.html', compositions=[composition])
 
-@main.route('/edit/<slug>')
+@main.route('/edit/<slug>',  methods=["GET", "POST"])
 @login_required
 def edit_composition(slug):
     """
     Edit each composition. Login is required. 
     Args: slug
+    Returns: edit_composition.html to render the form and then edit
     """
     form = CompositionForm()
     # searches for composition by slug or 404
     composition = Composition.query.filter_by(slug=slug).first_or_404()
     # if not the user nor admin abort
-    if current_user.username != composition.artist and not current_user.can(Permission.ADMIN):
+    if current_user.username != composition.artist.username and not current_user.can(Permission.ADMIN):
         abort(403)  
     if form.validate_on_submit():
         composition.release_type = form.release_type.data

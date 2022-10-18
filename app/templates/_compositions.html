@@ -37,7 +37,7 @@
         </div>
     </li>
 
-    {% if user == current_user %}
+    {% if composition.artist.username == current_user.username %}
     <a class="btn btn-default" href="{{ url_for('.edit_composition' , slug = composition.slug)}}">
         Edit Composition
     </a>
