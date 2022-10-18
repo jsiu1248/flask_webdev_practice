@@ -27,7 +27,7 @@ def internal_server_error(e):
     if not request.accept_mimetypes.accept_json and \
             request.accept_mimetypes.accept_html:
         # jsonify takes a dictionary and returns a response
-        response = jsonify({'error': 'not found'})
+        response = jsonify({'error': 'server error'})
         response.status_code = 500
         return response
     error_title="Internal Server Error"
