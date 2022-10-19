@@ -27,3 +27,21 @@ def verify_password(email_or_token, password):
 def auth_error():
 # if auth not successful then send 401 error saying auth not successful
     return unauthorized('Invalid credentials')
+
+@api.route('/tokens/', methods=['POST'])
+# get token double checks if the user is auth
+def get_token():
+    if g.current_user.is_anonymous or g.token_used:
+        return unauthorized('Invalid credentials')
+    # only auth users can get tokens
+    return jsonify({'token': g.current_user.generate_auth_token(
+        expiration_sec=3600), 'expiration': 3600})
+
+# making life easier because all requires who make api requests need to be logged in it
+@api.before_request
+# same name decorator from flask-httpauth
+@auth.login_required
+def before_request():
+    if not g.current_user.is_anonymous and \
+            not g.current_user.confirmed:
+        return forbidden('Unconfirmed account')
