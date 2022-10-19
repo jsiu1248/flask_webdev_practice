@@ -1,22 +1,23 @@
 {% extends 'base.html'%}
 
-
+{% block page_content %}
 <h1>Followed by: {{current_user.username}}</h1>
+
 
 <ul class="followers">
 
-    {% for follower in followers%}
+    {% for follow in follows%}
     <li class="follower">
         {# Single composition #}
         <div class="profile-thumbnail">
-            <a href="{{ url_for('main.user', username=follower.artist.username) }}">
-                <img class="img-rounded profile-thumbnail" src="{{ follower.artist.unicornify(size=64) }}">
+            <a href="{{ url_for('main.user', username=follow.artist.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ follow.artist.unicornify(size=64) }}">
             </a>
         </div>
     </li>
 
     {% if follower.artist.username == current_user.username %}
-    <a class="btn btn-default" href="{{ url_for('.edit_composition' , slug = follower.slug)}}">
+    <a class="btn btn-default" href="{{ url_for('.edit_composition' , slug = follow.slug)}}">
         Edit Composition
     </a>
     {% endif %}
@@ -24,7 +25,7 @@
 
 
     {% if current_user.is_administrator() %}
-    <a class="btn btn-default" href="{{ url_for('.admin_edit_profile', slug = follower.slug) }}">
+    <a class="btn btn-default" href="{{ url_for('.admin_edit_profile', slug = follow.slug) }}">
         Edit Composition as Admin
     </a>
     {% endif %}
@@ -32,3 +33,5 @@
 
     {% endfor %}
 </ul>
+
+{% endblock %}

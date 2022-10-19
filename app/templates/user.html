@@ -12,14 +12,17 @@
 <div class="page-header">
     <h1>{{ user.username }}</h1>
 
-    <a class="btn btn-default" href="{{ url_for('.unfollow', username=user.username) }}">
-        Unfollow
-    </a>
-
+    {% if current_user.can(Permission.FOLLOW) %}
+    {% if not current_user.is_following(user) %}
     <a class="btn btn-default" href="{{ url_for('.follow', username=user.username) }}">
         Follow
     </a>
-
+    {% else %}
+        <a class="btn btn-default" href="{{ url_for('.unfollow', username=user.username) }}">
+        Unfollow
+    </a>
+    {% endif %}
+    {% endif %}
     <button type="button" class="btn btn-light">
         <a href="{{ url_for('.following', username=user.username) }}">Following</a> <span
             class="badge badge-light">{{user.following.count() - 1}}</span>
