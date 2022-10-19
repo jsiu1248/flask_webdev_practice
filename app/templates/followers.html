@@ -1,4 +1,5 @@
 {% extends 'base.html'%}
+{% import "_macros.html" as macros %}
 
 {% block page_content %}
 <h1>Followed by: {{current_user.username}}</h1>
@@ -7,31 +8,25 @@
 <ul class="followers">
 
     {% for follow in follows%}
-    <li class="follower">
+    {% if follow.user != user %}
+    <li class="following">
         {# Single composition #}
         <div class="profile-thumbnail">
-            <a href="{{ url_for('main.user', username=follow.artist.username) }}">
-                <img class="img-rounded profile-thumbnail" src="{{ follow.artist.unicornify(size=64) }}">
+            <a href="{{ url_for('.user', username=follow.user.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ follow.user.unicornify(size=64) }}">
             </a>
         </div>
     </li>
 
-    {% if follower.artist.username == current_user.username %}
-    <a class="btn btn-default" href="{{ url_for('.edit_composition' , slug = follow.slug)}}">
-        Edit Composition
+    {{ moment(follow.timestamp).format('L') }}
     </a>
+
+
     {% endif %}
-
-
-
-    {% if current_user.is_administrator() %}
-    <a class="btn btn-default" href="{{ url_for('.admin_edit_profile', slug = follow.slug) }}">
-        Edit Composition as Admin
-    </a>
-    {% endif %}
-
-
     {% endfor %}
 </ul>
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, endpoint) }}
+</div>
 
 {% endblock %}
