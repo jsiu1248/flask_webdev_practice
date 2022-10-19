@@ -158,6 +158,8 @@ class User(UserMixin, db.Model):
             # if email is not black then call the hash function
             if self.email is not None and self.avatar_hash is None:
                 self.avatar_hash = self.email_hash()
+        # all users are their own followers now
+        self.follow(self)
     
     # creating a hash for the email
     def email_hash(self):
