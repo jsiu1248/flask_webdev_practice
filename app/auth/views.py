@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, flash, current_app, request
+from flask import render_template, session, g, redirect, url_for, flash, current_app, request
 
 from app.email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm # need a period because trying to import within package
@@ -180,3 +180,21 @@ def resend_confirmation():
     send_email(user.email, "Confirmation Email!", 'auth/confirm', user=user, confirmation_link = confirmation_link)
     flash("Check your email for the reconfirmation email.")
     return redirect(url_for('auth.unconfirmed'))
+
+
+@auth.verify_password
+def verify_password(email_or_token, password):
+    if email_or_token == '':
+        return False
+    if password == '':
+        # called to grab the User assocaited with the token, which is stored in g.current_user
+        # token_used is True when it is verified
+        g.current_user = User.verify_auth_token(email_or_token)
+        g.token_used = True
+        return g.current_user is not None
+    user = User.query.filter_by(email=email_or_token).first()
+    if not user:
+        return False
+    g.current_user = user
+    g.token_used = False
+    return user.verify_password(password)

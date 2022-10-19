@@ -9,6 +9,7 @@ import jwt
 import hashlib
 import bleach
 import re
+from itsdangerous import Serializer
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
@@ -289,6 +290,21 @@ class User(UserMixin, db.Model):
                 user.follow(user)
                 db.session.add(user)
                 db.session.commit()
+
+    def generate_auth_token(self, expiration_sec):
+        s = Serializer(current_app.config['SECRET_KEY'],
+                          expires_in=expiration_sec)
+        return s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_auth_token(token):
+        # if a user token is successfully verified, the User corresponding to the token is returned.
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
 
 # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
 # define the same methods as User to prevent any NameErrors where local or global name is not found
