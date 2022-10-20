@@ -2,7 +2,8 @@ from flask import g, jsonify
 from flask_httpauth import HTTPBasicAuth
 from . import api
 from ..models import User
-from .errors import forbidden, unauthorized
+from .errors import forbidden, unauthorized, bad_request
+from ..exceptions import ValidationError
 
 # in order to auth a user via http, the user has to send their credentials through the Authorization request header.
 # this is a wrapper
@@ -45,3 +46,9 @@ def before_request():
     if not g.current_user.is_anonymous and \
             not g.current_user.confirmed:
         return forbidden('Unconfirmed account')
+
+
+
+@api.errorhandler(ValidationError)
+def validation_error(e):
+    return bad_request(e.args[0])
