@@ -2,7 +2,7 @@
 from email.policy import default
 from . import db, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import current_app
+from flask import current_app, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime, timedelta
 import jwt
@@ -306,6 +306,18 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(data['id'])
 
+    def to_json(self):
+        # dictionary gives client info about user without sensitive
+        json_user = {
+            'url': url_for('api.get_user', id=self.id),
+            'username': self.username,
+            'last_seen': self.last_seen,
+            'compositions_url': url_for('api.get_user_compositions', id=self.id),
+            'followed_compositions_url': url_for('api.get_user_followed', id=self.id),
+            'composition_count': self.compositions.count()
+        }
+        return json_user
+
 # in order to have the same helper methods for any user, you have to add the same for the anoynomous user or people who don't have account
 # define the same methods as User to prevent any NameErrors where local or global name is not found
 class AnonymousUser(AnonymousUserMixin):
@@ -356,6 +368,20 @@ class Composition(db.Model):
         self.slug = f"{self.id}-" + re.sub(r'[^\w]+', '-', self.title.lower())
         db.session.add(self)
         db.session.commit()
+
+    def to_json(self):
+        # dictionary gives client info about composition without sensitive
+        json_user = {
+            'url': url_for('api.get_composition', id=self.id),
+            'release_type': self.release_type,
+            'title': self.title,
+            'description': self.description,
+            'description_html': self.description_html,
+            'timestamp': self.timestamp, 
+            'artist_url': url_for('api.get_user', id=self.id)
+        }
+        return json_user
+
 
 
 db.event.listen(Composition.description,
