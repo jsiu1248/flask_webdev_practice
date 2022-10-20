@@ -385,9 +385,14 @@ class Composition(db.Model):
 
     @staticmethod
     def from_json(json_composition):
+        """checking the json data is valid
+        Args: JSON dictionary
+        Returns: Composition
+        """
         release_type = json_composition.get('release_type')
         title = json_composition.get('title')
         description = json_composition.get('description')
+        # if the data is invalid then a validation error is used
         if release_type is None:
             raise ValidationError("Composition must have a release type")
         if title is None:
