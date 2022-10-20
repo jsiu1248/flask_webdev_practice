@@ -10,6 +10,7 @@ import hashlib
 import bleach
 import re
 from itsdangerous import Serializer
+from app.exceptions import ValidationError
 
 # They are all in CAPS because they are constants and shouldn't change. 
 class Permission:
@@ -381,6 +382,21 @@ class Composition(db.Model):
             'artist_url': url_for('api.get_user', id=self.id)
         }
         return json_user
+
+    @staticmethod
+    def from_json(json_composition):
+        release_type = json_composition.get('release_type')
+        title = json_composition.get('title')
+        description = json_composition.get('description')
+        if release_type is None:
+            raise ValidationError("Composition must have a release type")
+        if title is None:
+            raise ValidationError("Composition must have a title")
+        if description is None:
+            raise ValidationError("Composition must have a description")
+        return Composition(release_type=release_type,
+                           title=title,
+                           description=description)
 
 
 
