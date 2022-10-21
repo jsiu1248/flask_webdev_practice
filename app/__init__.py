@@ -65,6 +65,9 @@ def create_app(config_name='default'):
     from .auth import auth as auth_blueprint # curly braces mean package in vscode
     app.register_blueprint(auth_blueprint)
 
+    from .api import api as api_blueprint # curly braces mean package in vscode
+    app.register_blueprint(api_blueprint)
+
     # he configuration class init_app() static method
     # is called to do any remaining setup for the app
  
