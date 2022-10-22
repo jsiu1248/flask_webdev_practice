@@ -3,30 +3,44 @@
 
 {% block page_content %}
 <h1>Following: {{current_user.username}}</h1>
-
-
-<ul class="following">
+<table class="table table-light">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">User</th>
+        <th scope="col">Since</th>
+      </tr>
+    </thead>
+    <tbody>
 
     {% for follow in follows%}
+
     {% if follow.user != user %}
     <li class="following">
         {# Single composition #}
-        <div class="profile-thumbnail">
+        <tr height=75px>
+            <td>
+        <img class="profile-thumbnail">
             <a href="{{ url_for('.user', username=follow.user.username) }}">
+            
                 <img class="img-rounded profile-thumbnail" src="{{ follow.user.unicornify(size=64) }}">
+            </td>
+            <td><a href="{{ url_for('main.user', username=follow.user.username) }}">{{follow.username}}</a></td>
+            
+            <td>    {{ moment(follow.timestamp).format('L') }}</td>>
             </a>
         </div>
     </li>
 
-    {{ moment(follow.timestamp).format('L') }}
+
     </a>
 
 
     {% endif %}
-    {% endfor %}
-</ul>
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, endpoint) }}
-</div>
+        {% endfor %}
+
+    </tbody>
+</table>
+
 
 {% endblock %}
