@@ -1,2 +1,14 @@
+{% extends "base.html" %}
 
+{% block title %}{{super()}}{% endblock title %}
+
+{% block navbar %}
+    {{ super() }}
+{% endblock navbar %}
+{% block content %}
+{{ super() }}
+<div class='pagination'>
 {% include '_compositions.html' %}
+</div>
+
+{% endblock content %}
