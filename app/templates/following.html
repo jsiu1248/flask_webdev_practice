@@ -13,21 +13,21 @@
     </thead>
     <tbody>
 
-    {% for follow in follows%}
+    {% for f in user.following.all()%}
 
-    {% if follow.user != user %}
+    {% if f.user != user %}
     <li class="following">
         {# Single composition #}
         <tr height=75px>
             <td>
         <img class="profile-thumbnail">
-            <a href="{{ url_for('.user', username=follow.user.username) }}">
+            <a href="{{ url_for('.user', username=f.following.username) }}">
             
-                <img class="img-rounded profile-thumbnail" src="{{ follow.user.unicornify(size=64) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ f.following.unicornify(size=64) }}">
             </td>
-            <td><a href="{{ url_for('main.user', username=follow.user.username) }}">{{follow.username}}</a></td>
-            
-            <td>    {{ moment(follow.timestamp).format('L') }}</td>>
+            <td><a href="{{ url_for('main.user', username=f.following.username) }}">{{f.following.username}}</a></td>
+
+            <td>    {{ moment(f.timestamp).format('L') }}</td>>
             </a>
         </div>
     </li>
