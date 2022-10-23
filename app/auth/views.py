@@ -70,8 +70,8 @@ def register():
         # send_email(u.email, 'Welcome to Ragtime!', 'mail/welcome', user = u)
         send_email(u.email, "Confirmation email!", 'auth/confirm', user = u, confirmation_link = confirmation_link)
         flash("A confirmation email was send to you.")
-
-        return redirect(url_for('main.index'))
+        
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form = form)
 
 @auth.route('/logout')
