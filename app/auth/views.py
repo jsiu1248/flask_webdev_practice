@@ -47,15 +47,16 @@ def register():
         password_entered = form.password.data
         username_entered = form.username.data
         # query checking if the name is in the database
-        user = User.query.filter_by(email = email_entered).first()
+        # user = User.query.filter_by(email = email_entered).first()
 
         # it auto checks if the email is used already and same for the username
 
 
-        u = User()
-        u.email = email_entered
-        u.username = username_entered
-        u.password = password_entered
+        u = User(email = email_entered, username = username_entered, 
+        password = password_entered)
+        # u.email = email_entered
+        # u.username = username_entered
+        # u.password = password_entered
 
         db.session.add(u)
         db.session.commit()
@@ -70,8 +71,8 @@ def register():
         # send_email(u.email, 'Welcome to Ragtime!', 'mail/welcome', user = u)
         send_email(u.email, "Confirmation email!", 'auth/confirm', user = u, confirmation_link = confirmation_link)
         flash("A confirmation email was send to you.")
-        
-        return redirect(url_for('auth.login'))
+
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html', form = form)
 
 @auth.route('/logout')
