@@ -2,31 +2,44 @@
 {% import "_macros.html" as macros %}
 
 {% block page_content %}
-<h1>Followed by: {{current_user.username}}</h1>
+<h1>Follower: {{current_user.username}}</h1>
+<table class="table table-light">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">User</th>
+        <th scope="col">Since</th>
+      </tr>
+    </thead>
+    <tbody>
 
+    {% for f in user.followers.all()%}
 
-<ul class="followers">
-
-    {% for follow in follows%}
-    {% if follow.user != user %}
-    <li class="following">
+    {% if f.user != user %}
+    <li class="follower">
         {# Single composition #}
-        <div class="profile-thumbnail">
-            <a href="{{ url_for('.user', username=follow.user.username) }}">
-                <img class="img-rounded profile-thumbnail" src="{{ follow.user.unicornify(size=64) }}">
+        <tr height=75px>
+            <td>
+        <img class="profile-thumbnail">
+            <a href="{{ url_for('.user', username=f.follower.username) }}">
+            
+                <img class="img-rounded profile-thumbnail" src="{{ f.follower.unicornify(size=64) }}">
+            </td>
+            <td><a href="{{ url_for('main.user', username=f.follower.username) }}">{{f.follower.username}}</a></td>
+
+            <td>    {{ moment(f.timestamp).format('L') }}</td>>
             </a>
         </div>
     </li>
 
-    {{ moment(follow.timestamp).format('L') }}
-    </a>
+</a>
 
 
-    {% endif %}
+{% endif %}
     {% endfor %}
-</ul>
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, endpoint) }}
-</div>
+
+</tbody>
+</table>
+
 
 {% endblock %}
