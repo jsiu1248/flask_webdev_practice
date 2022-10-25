@@ -1,4 +1,4 @@
-from flask import jsonify, request, g, url_for
+from flask import jsonify, request, g, url_for, current_app
 from app import db
 from ..models import Composition
 from . import api
@@ -7,14 +7,6 @@ from ..decorators import permission_required
 from .errors import forbidden
 from functools import wraps
 
-@api.route('/compositions/')
-def get_compositions():
-    """
-    takes compositions. Then jsonify the objects one by one.
-    """
-    compositions = Composition.query.all()
-    return jsonify({ 'compositions': [composition.to_json()
-                                      for composition in compositions]})
 
 @api.route('/compositions/', methods=['POST'])
 @permission_required(Permission.PUBLISH)
@@ -55,3 +47,24 @@ def edit_composition(id):
     db.session.add(composition)
     db.session.commit()
     return jsonify(composition.to_json())
+
+@api.route('/compositions/')
+def get_compositions():
+    page = request.args.get('page', 1, type=int)
+    pagination = Composition.query.paginate(
+        page,
+        per_page=current_app.config['RAGTIME_COMPS_PER_PAGE'],
+        error_out=False)
+    compositions = pagination.items
+    prev = None
+    if pagination.has_prev:
+        prev = url_for('api.get_compositions', page=page-1)
+    next = None
+    if pagination.has_next:
+        next = url_for('api.get_compositions', page=page+1)
+    return jsonify({
+        'compositions': [composition.to_json() for composition in compositions],
+        'prev': prev,
+        'next': next,
+        'count': pagination.total
+    })
