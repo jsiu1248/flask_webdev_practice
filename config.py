@@ -67,3 +67,31 @@ configs = {
      'production': ProductionConfig,
      'default': DevelopmentConfig
 }
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        f'sqlite:///{os.path.join(basedir, "data.sqlite")}'
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        import logging
+        from logging.handlers import SMTPHandler
+        creds = None
+        secure = None
+        if getattr(cls, 'MAIL_USERNAME', None) is not None:
+            creds = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
+            if getattr(cls, 'MAIL_USE_TLS', None):
+                # logging: to use TLS, must pass tuple (can be empty)
+                secure = ()
+        mail_handler = SMTPHandler(
+            mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
+            fromaddr=cls.RAGTIME_MAIL_SENDER,
+            toaddrs=[cls.RAGTIME_ADMIN],
+            subject=cls.RAGTIME_MAIL_SUBJECT_PREFIX + " Application Error",
+            credentials=creds,
+            secure=secure
+        )
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
