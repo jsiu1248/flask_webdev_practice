@@ -31,6 +31,7 @@ class Config:
 
     # when an email is sent to a user, it is set to this value
     RAGTIME_MAIL_SENDER = f'Ragtime Admin <{RAGTIME_ADMIN}>'
+    HTTPS_REDIRECT = False
 
     # export MAIL_USERNAME=<your Gmail username>
     # remember to change it to your app password
@@ -97,6 +98,13 @@ class HerokuConfig(ProductionConfig):
         # allowing warnings to pass through the log output
         file_handler.setLevel(file_handler, level=logging.INFO)
         app.logger.addHandler(file_handler)
+
+        # HTTPS_REDIRECT is only set to True if the DYNO environment variable existsç
+        HTTPS_REDIRECT = True if os.environ.get('DYNO') else False
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        # Heroku uses a reverse proxy server to redirect any client requests meant for your website to your app
+        # if not your app would get confused and would send external links like confirmation tokens through http://. 
+        app.wsgi_app = ProxyFix(app.wsgi_app)
 
 # giving them all names
 configs = {

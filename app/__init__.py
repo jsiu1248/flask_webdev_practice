@@ -55,6 +55,21 @@ def create_app(config_name='default'):
     bootstrap.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+
+    if app.config['HTTPS_REDIRECT']:
+        # enable TLS with tailisman
+        from flask_talisman import Talisman
+        Talisman(app, content_security_policy={
+                'default-src': [
+                    # disallowing scripts or styles outside of app
+                    "'self'",
+                    'cdnjs.cloudflare.com',
+                ],
+                # allow images from anywhere, 
+                #   including unicornify.pictures
+                'img-src': '*'
+            }
+        )                                                                                                                                                                                                                            
     
     # configuration settings are loaded through the from_object() method
     # taking classes members into a dictionary
