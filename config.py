@@ -54,20 +54,6 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_TEST_URL') or \
 'sqlite:///{os.path.join(basedir, "data-test.sqlite")}'
-
-class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-f'sqlite:///{os.path.join(basedir, "data.sqlite")}'
-
-# giving them all names
-configs = {
-     'development': DevelopmentConfig,
-     'testing': TestingConfig,
-     'production': ProductionConfig,
-     'default': DevelopmentConfig, 
-     'heroku': HerokuConfig
-}
-
 class ProductionConfig(Config):
     # when deploying on Heroku, database_URL is taken care of
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
@@ -97,6 +83,7 @@ class ProductionConfig(Config):
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
+
 class HerokuConfig(ProductionConfig):
     @classmethod
     def init_app(cls, app):
@@ -110,3 +97,14 @@ class HerokuConfig(ProductionConfig):
         # allowing warnings to pass through the log output
         file_handler.setLevel(file_handler, level=logging.INFO)
         app.logger.addHandler(file_handler)
+
+# giving them all names
+configs = {
+     'development': DevelopmentConfig,
+     'testing': TestingConfig,
+     'production': ProductionConfig,
+     'default': DevelopmentConfig, 
+     'heroku': HerokuConfig
+}
+
+
