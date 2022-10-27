@@ -1,5 +1,4 @@
 # config.py
-# imports and such...
 
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -65,10 +64,12 @@ configs = {
      'development': DevelopmentConfig,
      'testing': TestingConfig,
      'production': ProductionConfig,
-     'default': DevelopmentConfig
+     'default': DevelopmentConfig, 
+     'heroku': HerokuConfig
 }
 
 class ProductionConfig(Config):
+    # when deploying on Heroku, database_URL is taken care of
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         f'sqlite:///{os.path.join(basedir, "data.sqlite")}'
 
@@ -95,3 +96,17 @@ class ProductionConfig(Config):
         )
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
+
+class HerokuConfig(ProductionConfig):
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+
+        # log to stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler
+
+        # allowing warnings to pass through the log output
+        file_handler.setLevel(file_handler, level=logging.INFO)
+        app.logger.addHandler(file_handler)
