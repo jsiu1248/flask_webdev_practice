@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_wtf.csrf import CSRFProtect
 # from .models import User, Role
 
 
@@ -16,6 +17,9 @@ bootstrap = Bootstrap()
 migrate = Migrate()
 mail = Mail()
 moment = Moment()
+
+# protects against cross-site request forgery outside of forms
+csrf = CSRFProtect()
 
 # instance of LoginManager
 login_manager = LoginManager()
@@ -55,6 +59,7 @@ def create_app(config_name='default'):
     bootstrap.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    csrf.init_app(app)
 
     if app.config['HTTPS_REDIRECT']:
         # enable TLS with tailisman
