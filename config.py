@@ -55,6 +55,7 @@ class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_TEST_URL') or \
 'sqlite:///{os.path.join(basedir, "data-test.sqlite")}'
+
 class ProductionConfig(Config):
     # when deploying on Heroku, database_URL is taken care of
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
