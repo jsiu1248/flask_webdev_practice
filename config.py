@@ -59,7 +59,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     # when deploying on Heroku, database_URL is taken care of
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        f'postgresql:///{os.path.join(basedir, "data.sqlite")}'
+        f'sqlite:///{os.path.join(basedir, "data.sqlite")}'
 
     @classmethod
     def init_app(cls, app):
