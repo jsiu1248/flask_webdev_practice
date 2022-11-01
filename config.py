@@ -61,6 +61,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         f'postgres:///{os.path.join(basedir, "data.mkd")}'
 
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
